@@ -200,3 +200,4 @@ let possibleMoves = getPossibleMoves(board, 'tiger0', [8,0])
 console.log(possibleMoves.some(a => (a[0]===7 && a[1]===0)))
 
 console.log(JSON.parse(JSON.stringify(Pieces))["elephant0"])
+console.log(Object.values(DENS).flat())

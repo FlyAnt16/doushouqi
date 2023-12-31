@@ -41,11 +41,16 @@ export const DouSHouQi = {
                     G.selectedPiece = G.cells[row][col]
                     G.selectedRow = row
                     G.selectedCol = col
-
                 }
             }
         }
 
+    },
+
+    endIf : ({G, ctx}) => {
+        if (Object.values(DENS).flat().some(a => (G.cells[a[0]][a[1]] !== null))){
+            return {winner: ctx.currentPlayer}
+        }
     },
 }
 
