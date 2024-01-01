@@ -16,31 +16,30 @@ export const DouSHouQi = {
 
     moves : {
         onClick : ({G, playerID, events}, row, col) => {
-            if (G.selectedPiece !== null) {
-                let possibleMoves = getPossibleMoves(G);
-                if (possibleMoves.some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))){
-                    G.cells[row][col] = G.selectedPiece;
-                    G.cells[G.selectedRow][G.selectedCol] = null;
-                    if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])){
-                        G.pieces[G.selectedPiece].value = -1
-                    } else {
-                        G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
-                    }
-                    G.selectedPiece = null;
-                    G.selectedRow = null;
-                    G.selectedCol = null;
-                    events.endTurn();
-                }
+            if ((G.cells[row][col]!==null) && (G.pieces[G.cells[row][col]].playerNumber === parseInt(playerID))){
+                G.selectedPiece = G.cells[row][col]
+                G.selectedRow = row
+                G.selectedCol = col
             } else {
-                if (G.cells[row][col] === null) {
-                    return INVALID_MOVE;
-                }
-                if (G.pieces[G.cells[row][col]].playerNumber !== parseInt(playerID)) {
-                    return INVALID_MOVE;
+                if (G.selectedPiece !== null){
+                    let possibleMoves = getPossibleMoves(G);
+                    if (possibleMoves.some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))){
+                        G.cells[row][col] = G.selectedPiece;
+                        G.cells[G.selectedRow][G.selectedCol] = null;
+                        if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])){
+                            G.pieces[G.selectedPiece].value = -1
+                        } else {
+                            G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
+                        }
+                        G.selectedPiece = null;
+                        G.selectedRow = null;
+                        G.selectedCol = null;
+                        events.endTurn();
                 } else {
-                    G.selectedPiece = G.cells[row][col]
-                    G.selectedRow = row
-                    G.selectedCol = col
+                    return INVALID_MOVE;
+                    }
+                } else{
+                    return INVALID_MOVE;
                 }
             }
         }
