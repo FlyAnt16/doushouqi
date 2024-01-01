@@ -28,6 +28,18 @@ export const BOARD = [
     ['tiger0', null, null, null, null, null, 'lion0']
 ]
 
+export const TERRAIN = [
+    [null, null, 'trap1', 'den1', 'trap1', null, null],
+    [null, null, null, 'trap1', null, null, null],
+    [null, null, null, null, null, null, null],
+    [null, 'river', 'river', null, 'river', 'river', null],
+    [null, 'river', 'river', null, 'river', 'river', null],
+    [null, 'river', 'river', null, 'river', 'river', null],
+    [null, null, null, null, null, null, null],
+    [null, null, null, 'trap0', null, null, null],
+    [null, null, 'trap0', 'den0', 'trap0', null, null]
+]
+
 // export const BOARD = [
 //     ['lion1', null, null, null, null, null, 'tiger1'],
 //     [null, 'dog1', null, null, null, 'cat1', null],

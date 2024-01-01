@@ -1,8 +1,190 @@
 
-/*.cell{*/
-/*    border : '1px solid #555',*/
-/*    width : '100px',*/
-/*    height : '100px',*/
-/*    lineHeight : 'normal',*/
-/*    textAlign : 'center',*/
-/*};*/
+.cell {
+    border : 1px solid #555;
+    width : 90px;
+    height : 90px;
+    line-height : normal;
+    text-align: center;
+}
+
+/* river styles got from ChatGPT*/
+.river {
+    background-color: lightblue;
+    background-image: repeating-linear-gradient(
+            0deg,
+            rgba(255, 255, 255, 0.2) 0px,
+            rgba(255, 255, 255, 0.2) 2px,
+            transparent 2px,
+            transparent 4px
+    );
+    background-size: 20px 20px;
+}
+
+/* trap styles got from chatGPT */
+.trap0 {
+    background-color: #ff4136; /* A warning red color */
+    border-color: #c22f1f; /* A darker border to make it stand out */
+    color: #fff; /* White text to contrast the dark background */
+    background-image: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(0, 0, 0, 0.2) 10px,
+            rgba(0, 0, 0, 0.2) 20px
+    ); /* Diagonal stripes */
+    position: relative; /* Needed for pseudo-elements */
+}
+
+.trap0::before {
+    content: "!";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em; /* Large exclamation mark */
+    color: #fff;
+    text-shadow: 0 0 5px #000; /* Make the exclamation mark stand out */
+    z-index : 1;
+}
+
+.trap1 {
+    background-color: #16c01c; /* A warning red color */
+    border-color: #0b4413; /* A darker border to make it stand out */
+    color: #fff; /* White text to contrast the dark background */
+    background-image: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(0, 0, 0, 0.2) 10px,
+            rgba(0, 0, 0, 0.2) 20px
+    ); /* Diagonal stripes */
+    position: relative; /* Needed for pseudo-elements */
+}
+
+.trap1::before {
+    content: "!";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em; /* Large exclamation mark */
+    color: #fff;
+    text-shadow: 0 0 5px #000; /* Make the exclamation mark stand out */
+    z-index : 1;
+}
+
+/* den style generated from ChatGPT */
+.den0 {
+    position : relative;
+}
+
+.den0::before {
+    content: "🚩"; /* Your flag character or image */
+    position: absolute;
+    top: 50%; /* Center the flag */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the flag */
+    font-size: 2em; /* Adjust size as needed */
+}
+
+.den1 {
+    position : relative;
+}
+
+.den1 {
+    border : 1px solid #555;
+    width : 90px;
+    height : 90px;
+    line-height : normal;
+    text-align: center;
+}
+
+.den1::before {
+    content: "🚩"; /* Your flag character or image */
+    filter: hue-rotate(90deg);
+    position: absolute;
+    top: 50%; /* Center the flag */
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the flag */
+    font-size: 2em; /* Adjust size as needed */
+}
+
+.elephant0 {
+    color : red;
+    z-index : 2;
+}
+
+.lion0 {
+    color : red;
+    z-index : 2;
+}
+
+.tiger0 {
+    color : red;
+    z-index : 2;
+}
+
+.panther0 {
+    color : red;
+    z-index : 2;
+}
+
+.wolf0 {
+    color : red;
+    z-index : 2;
+}
+
+.dog0 {
+    color : red;
+    z-index : 2;
+}
+
+.cat0 {
+    color : red;
+    z-index : 2;
+}
+
+.rat0 {
+    color : red;
+    z-index : 2;
+}
+
+.elephant1 {
+    color : green;
+    z-index : 2;
+}
+
+.lion1 {
+    color : green;
+    z-index : 2;
+}
+
+.tiger1 {
+    color : green;
+    z-index : 2;
+}
+
+.panther1 {
+    color : green;
+    z-index : 2;
+}
+
+.wolf1 {
+    color : green;
+    z-index : 2;
+}
+
+.dog1 {
+    color : green;
+    z-index : 2;
+}
+
+.cat1 {
+    color : green;
+    z-index : 2;
+}
+
+.rat1 {
+    color : green;
+    z-index : 2;
+}

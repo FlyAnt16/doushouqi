@@ -7,7 +7,6 @@ class Piece{
         this.canCrossRiver = canCrossRiver;
         this.playerNumber = playerNumber;
     }
-
 }
 
 export const Pieces = {

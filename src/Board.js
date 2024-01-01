@@ -1,13 +1,10 @@
 import React from 'react';
-import {NUMOFCOL, NUMOFROW} from "./constants";
+import './Board.css';
+import {NUMOFCOL, NUMOFROW, TERRAIN} from "./constants";
 
-// function Square({piece, highlighted}){
-//     return(
-//         <div>
-//
-//         </div>
-//     )
-// }
+
+
+
 
 export function Board({ctx, G, moves}) {
     const onClick = (id) => {
@@ -16,14 +13,6 @@ export function Board({ctx, G, moves}) {
         return moves.onClick(row,col)
     }
 
-    const cellStyle = {
-        border : '1px solid #555',
-        width : '100px',
-        height : '100px',
-        lineHeight : 'normal',
-        textAlign : 'center',
-    };
-
     let tbody = []
     for (let i=0; i<NUMOFROW; i++){
         let cells = [];
@@ -31,7 +20,7 @@ export function Board({ctx, G, moves}) {
             const id = NUMOFCOL*i+j;
             cells.push(
                 <td key={id}>
-                    <button style={cellStyle} onClick={() => onClick(id)}>{G.cells[i][j]}</button>
+                    <button className={["cell", TERRAIN[i][j], G.cells[i][j]].join(" ")} onClick={() => onClick(id)}>{G.cells[i][j]}</button>
                 </td>
             )
         }
