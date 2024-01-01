@@ -17,7 +17,7 @@ export const RIVER = [
 ]
 
 export const BOARD = [
-    ['lion1', null, 'tiger0', null, null, null, 'tiger1'],
+    ['lion1', null, null, null, null, null, 'tiger1'],
     [null, 'dog1', null, null, null, 'cat1', null],
     ['rat1', null, 'panther1', null, 'wolf1', null, 'elephant1'],
     [null, null, null, null, null, null, null, null],
@@ -25,7 +25,7 @@ export const BOARD = [
     [null, null, null, null, null, null, null, null],
     ['elephant0', null, 'wolf0', null, 'panther0', null, 'rat0'],
     [null, 'cat0', null, null, null, 'dog0', null],
-    [null, null, null, null, null, null, 'lion0']
+    ['tiger0', null, null, null, null, null, 'lion0']
 ]
 
 // export const BOARD = [
