@@ -109,6 +109,10 @@
     font-size: 2em; /* Adjust size as needed */
 }
 
+.possibleMove {
+    background-color : yellow;
+}
+
 .elephant0 {
     color : red;
     z-index : 2;

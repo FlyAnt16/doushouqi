@@ -1,6 +1,7 @@
 import React from 'react';
 import './Board.css';
 import {NUMOFCOL, NUMOFROW, TERRAIN} from "./constants";
+import {getPossibleMoves} from "./Game";
 
 
 
@@ -13,6 +14,16 @@ export function Board({ctx, G, moves}) {
         return moves.onClick(row,col)
     }
 
+    function createNullBoard() {
+        return new Array(NUMOFROW).fill(null).map(() => new Array(NUMOFCOL).fill(null))
+    }
+
+    let possibleMoves = []
+    if (G.selectedPiece) possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol])
+    let possibleMovesBoard = createNullBoard()
+    possibleMoves.forEach( ([row, col]) => possibleMovesBoard[row][col]='possibleMove')
+
+
     let tbody = []
     for (let i=0; i<NUMOFROW; i++){
         let cells = [];
@@ -20,7 +31,7 @@ export function Board({ctx, G, moves}) {
             const id = NUMOFCOL*i+j;
             cells.push(
                 <td key={id}>
-                    <button className={["cell", TERRAIN[i][j], G.cells[i][j]].join(" ")} onClick={() => onClick(id)}>{G.cells[i][j]}</button>
+                    <button className={["cell", TERRAIN[i][j], G.cells[i][j], possibleMovesBoard[i][j]].join(" ")} onClick={() => onClick(id)}>{G.cells[i][j]}</button>
                 </td>
             )
         }
