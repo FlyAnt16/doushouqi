@@ -31,7 +31,7 @@ export function Board({ctx, G, moves}) {
             const id = NUMOFCOL*i+j;
             cells.push(
                 <td key={id}>
-                    <button className={["cell", TERRAIN[i][j], G.cells[i][j], possibleMovesBoard[i][j]].join(" ")} onClick={() => onClick(id)}>{G.cells[i][j]}</button>
+                    <button className={["cell", TERRAIN[i][j], G.cells[i][j], possibleMovesBoard[i][j]].join(" ")} onClick={() => onClick(id)}></button>
                 </td>
             )
         }

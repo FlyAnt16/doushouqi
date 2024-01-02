@@ -1,8 +1,8 @@
 
 .cell {
-    border : 1px solid #555;
-    width : 90px;
-    height : 90px;
+    border : 4px solid #555;
+    width : 85px;
+    height : 85px;
     line-height : normal;
     text-align: center;
 }
@@ -91,14 +91,6 @@
     position : relative;
 }
 
-.den1 {
-    border : 1px solid #555;
-    width : 90px;
-    height : 90px;
-    line-height : normal;
-    text-align: center;
-}
-
 .den1::before {
     content: "🚩"; /* Your flag character or image */
     filter: hue-rotate(90deg);
@@ -114,81 +106,92 @@
 }
 
 .elephant0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/elephant0.png');
+    background-size: contain;
 }
+/*.elephant0::after {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top:0;*/
+/*    bottom:0;*/
+/*    left:0;*/
+/*    right:0;*/
+/*    background-image : url('./images/elephant0.png');*/
+/*    background-size: contain;*/
+/*}*/
+
 
 .lion0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/lion0.png');
+    background-size: contain;
 }
 
 .tiger0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/tiger0.png');
+    background-size: contain;
 }
 
 .panther0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/panther0.png');
+    background-size: contain;
 }
 
 .wolf0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/wolf0.png');
+    background-size: contain;
 }
 
 .dog0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/dog0.png');
+    background-size: contain;
 }
 
 .cat0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/cat0.png');
+    background-size: contain;
 }
 
 .rat0 {
-    color : red;
-    z-index : 2;
+    background-image : url('images/cat0.png');
+    background-size: contain;
 }
 
 .elephant1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/elephant1.png');
+    background-size: contain;
 }
 
 .lion1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/lion1.png');
+    background-size: contain;
 }
 
 .tiger1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/tiger1.png');
+    background-size: contain;
 }
 
 .panther1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/panther1.png');
+    background-size: contain;
 }
 
 .wolf1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/wol1.png');
+    background-size: contain;
 }
 
 .dog1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/dog1.png');
+    background-size: contain;
 }
 
 .cat1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/cat1.png');
+    background-size: contain;
 }
 
 .rat1 {
-    color : green;
-    z-index : 2;
+    background-image : url('images/rat1.png');
+    background-size: contain;
 }
