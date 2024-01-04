@@ -1,10 +1,7 @@
 import React from 'react';
 import './Board.css';
-import {NUMOFCOL, NUMOFROW, TERRAIN} from "./constants";
+import {createNullBoard, NUMOFCOL, NUMOFROW, TERRAIN} from "./Customise";
 import {getPossibleMoves} from "./Game";
-
-
-
 
 
 export function Board({ctx, G, moves}) {
@@ -12,10 +9,6 @@ export function Board({ctx, G, moves}) {
         let row = Math.floor(id / NUMOFCOL);
         let col = id - row * NUMOFCOL;
         return moves.onClick(row,col)
-    }
-
-    function createNullBoard() {
-        return new Array(NUMOFROW).fill(null).map(() => new Array(NUMOFCOL).fill(null))
     }
 
     let possibleMoves = []
