@@ -3,7 +3,7 @@ import path from 'path';
 import serve from 'koa-static';
 import {DouSHouQi} from "./Game";
 
-const server = Server({ games: [TicTacToe] });
+const server = Server({ games: [DouSHouQi] });
 const PORT = process.env.PORT || 8000;
 
 // Build path relative to the server.js file
