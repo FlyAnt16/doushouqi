@@ -29,6 +29,7 @@ function App(){
 
     switch (page){
         case 'Welcome' :
+            initialiseSettings()
             return <WelcomePage onClick={onClick}/>;
         case 'Game':
             return <DouShouQiSingle />
@@ -39,15 +40,6 @@ function App(){
         default:
             return <WelcomePage onClick={onClick} />
     }
-}
-
-function defaultSetting(){
-    initialiseSettings()
-}
-
-function App(){
-    randomPieceSetting()
-    return <TicTacToeClient />
 }
 
 export default App;
