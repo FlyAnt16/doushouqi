@@ -4,7 +4,7 @@ import serve from 'koa-static';
 import {DouSHouQi} from "./src/Game";
 
 const server = Server({ games: [DouSHouQi] });
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT;
 
 // Build path relative to the server.js file
 const frontEndAppBuildPath = path.resolve(__dirname, './build');
