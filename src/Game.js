@@ -1,4 +1,4 @@
-import {BOARD, DENS, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./constants";
+import {BOARD, DENS, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./Customise";
 import {Pieces} from "./Pieces";
 
 export const DouSHouQi = {
@@ -20,16 +20,7 @@ export const DouSHouQi = {
                 if (G.selectedPiece !== null){
                     let possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol]);
                     if (possibleMoves.some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))){
-                        G.cells[row][col] = G.selectedPiece;
-                        G.cells[G.selectedRow][G.selectedCol] = null;
-                        if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])){
-                            G.pieces[G.selectedPiece].value = -1
-                        } else {
-                            G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
-                        }
-                        G.selectedPiece = null;
-                        G.selectedRow = null;
-                        G.selectedCol = null;
+                        makeMove(G, row, col)
                         events.endTurn();
                     }
                 }
@@ -51,6 +42,18 @@ function selectFriendlyPiece(G, row, col) {
     G.selectedCol = col
 }
 
+function makeMove(G, row, col){
+    G.cells[row][col] = G.selectedPiece;
+    G.cells[G.selectedRow][G.selectedCol] = null;
+    if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])){
+        G.pieces[G.selectedPiece].value = -1
+    } else {
+        G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
+    }
+    G.selectedPiece = null;
+    G.selectedRow = null;
+    G.selectedCol = null;
+}
 
 function isEnemyTrap(playerNumber, [row, col]){
     return TRAPS[1-playerNumber].some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))

@@ -2,6 +2,14 @@ import React from 'react';
 import './Board.css';
 import {createNullBoard, NUMOFCOL, NUMOFROW, TERRAIN} from "./Customise";
 import {getPossibleMoves} from "./Game";
+import elephant from './images/elephant0.png'
+import lion from './images/lion0.png'
+import tiger from './images/tiger0.png'
+import panther from './images/panther0.png'
+import wolf from './images/wolf0.png'
+import dog from './images/dog0.png'
+import cat from './images/cat0.png'
+import rat from './images/rat0.png'
 
 
 export function Board({ctx, G, moves}) {
@@ -33,9 +41,31 @@ export function Board({ctx, G, moves}) {
 
     return(
         <div>
-            <table id="board">
-                <tbody>{tbody}</tbody>
-            </table>
+            <div>
+                <table id="board">
+                    <tbody>{tbody}</tbody>
+                </table>
+            </div>
+            <div className='pieceOrder'>
+                Piece order:
+                <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
+                >
+                <img alt='lion' width={'40px'} height={'40px'} src={lion}/>
+                >
+                <img alt='tiger' width={'40px'} height={'40px'} src={tiger}/>
+                >
+                <img alt='panther' width={'40px'} height={'40px'} src={panther}/>
+                >
+                <img alt='wolf' width={'40px'} height={'40px'} src={wolf}/>
+                >
+                <img alt='dog' width={'40px'} height={'40px'} src={dog}/>
+                >
+                <img alt='cat' width={'40px'} height={'40px'} src={cat}/>
+                >
+                <img alt='rat' width={'40px'} height={'40px'} src={rat}/>
+                >
+                <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
+            </div>
         </div>
     );
 }

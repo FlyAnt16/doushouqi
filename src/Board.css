@@ -195,3 +195,8 @@
     background-image : url('images/rat1.png');
     background-size: contain;
 }
+
+.pieceOrder{
+    display: flex;
+    align-items: center;
+}
