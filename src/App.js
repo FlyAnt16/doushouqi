@@ -12,7 +12,7 @@ const server = `${protocol}//${hostname}:${port}`;
 const DouShouQiClient = Client({
     game: DouSHouQi,
     board: Board,
-    multiplayer: SocketIO({ server })
+    multiplayer: SocketIO({ server }),
 })
 
 const DouShouQiSingle = Client({
