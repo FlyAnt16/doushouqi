@@ -1,8 +1,9 @@
-import {BOARD, DENS, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./Customise";
+import {BOARD, DENS, initialiseSettings, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./Customise";
 import {Pieces} from "./Pieces";
 
 export const DouSHouQi = {
     setup : () => {
+        initialiseSettings()
         return {
             selectedPiece: null,
             selectedRow : null,
