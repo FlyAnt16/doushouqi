@@ -1,6 +1,6 @@
+import React from 'react';
 
-
-export function WelcomePage({onClick}){
+export function WelcomePage({onClick} : {onClick: (arg:string)=>void}){
     return (
         <>
             <button onClick={() => onClick('')}>Single Player</button>

@@ -6,6 +6,7 @@ import {initialiseSettings, randomPieceSetting} from "./Customise";
 import {SocketIO} from "boardgame.io/multiplayer";
 import {useState} from "react";
 import {WelcomePage} from "./Welcome";
+import React from 'react';
 
 const { protocol, hostname, port } = window.location;
 const server = `${protocol}//${hostname}:${port}`;
@@ -23,7 +24,7 @@ const DouShouQiSingle = Client({
 
 function App(){
     const [page, setPage] = useState('Welcome')
-    function onClick(id){
+    function onClick(id:string){
         setPage('Game'+id)
     }
 
