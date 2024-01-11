@@ -21,7 +21,7 @@ export function Board({ctx, G, moves}:DouShouQiProps) {
     }
 
     let possibleMoves:number[][] = []
-    if (G.selectedPiece && G.selectedRow && G.selectedCol) possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol])
+    if (G.selectedPiece && (G.selectedRow!==null) && (G.selectedCol!==null)) possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol])
     let possibleMovesBoard = createNullBoard()
     possibleMoves.forEach( ([row, col]) => possibleMovesBoard[row][col]='possibleMove')
 

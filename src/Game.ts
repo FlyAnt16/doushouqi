@@ -25,15 +25,13 @@ export const DouSHouQi :Game<DouShouQiState> = {
 
     moves : {
         onClick : ({G, playerID, events}, row: number, col:number) => {
-            let selectedSquare = G.cells[row][col]
-            if (selectedSquare!== null) {
-                if (G.pieces[selectedSquare].playerNumber === parseInt(playerID)){
-                    selectFriendlyPiece(G, row, col)
-                }
+            let selected = G.cells[row][col]
+            if (selected && (G.pieces[selected].playerNumber === parseInt(playerID))){
+                selectFriendlyPiece(G, row, col)
             } else {
-                if (G.selectedPiece && G.selectedRow && G.selectedCol) {
+                if (G.selectedPiece && (G.selectedRow!==null) && (G.selectedCol!==null)){
                     let possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol]);
-                    if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
+                    if (possibleMoves.some(a => (a[0]===row && a[1]===col))){
                         makeMove(G, row, col)
                         events.endTurn();
                     }
@@ -57,7 +55,7 @@ function selectFriendlyPiece(G:DouShouQiState, row:number, col:number) :void {
 }
 
 function makeMove(G:DouShouQiState, row:number, col:number){
-    if (G.selectedRow && G.selectedCol && G.selectedPiece) {
+    if ((G.selectedRow!==null) && (G.selectedCol!==null) && G.selectedPiece) {
         G.cells[row][col] = G.selectedPiece;
         G.cells[G.selectedRow][G.selectedCol] = null;
         if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])) {
