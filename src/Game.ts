@@ -1,7 +1,17 @@
-import {BOARD, DENS, initialiseSettings, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./Customise";
-import {Pieces} from "./Pieces";
+import {BOARD, BoardType, DENS, initialiseSettings, NUMOFCOL, NUMOFROW, RIVER, TRAPS} from "./Customise";
+import {Pieces, PiecesType} from "./Pieces";
+import type { Game} from "boardgame.io"
 
-export const DouSHouQi = {
+export interface DouShouQiState{
+    selectedPiece : string | null,
+    selectedRow : number | null,
+    selectedCol : number | null,
+    cells : BoardType,
+    pieces : PiecesType,
+}
+
+
+export const DouSHouQi :Game<DouShouQiState> = {
     setup : () => {
         initialiseSettings()
         return {
@@ -14,13 +24,16 @@ export const DouSHouQi = {
     },
 
     moves : {
-        onClick : ({G, playerID, events}, row, col) => {
-            if ((G.cells[row][col]!==null) && (G.pieces[G.cells[row][col]].playerNumber === parseInt(playerID))){
-                selectFriendlyPiece(G, row, col)
+        onClick : ({G, playerID, events}, row: number, col:number) => {
+            let selectedSquare = G.cells[row][col]
+            if (selectedSquare!== null) {
+                if (G.pieces[selectedSquare].playerNumber === parseInt(playerID)){
+                    selectFriendlyPiece(G, row, col)
+                }
             } else {
-                if (G.selectedPiece !== null){
+                if (G.selectedPiece && G.selectedRow && G.selectedCol) {
                     let possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol]);
-                    if (possibleMoves.some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))){
+                    if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
                         makeMove(G, row, col)
                         events.endTurn();
                     }
@@ -37,38 +50,40 @@ export const DouSHouQi = {
     },
 }
 
-function selectFriendlyPiece(G, row, col) {
+function selectFriendlyPiece(G:DouShouQiState, row:number, col:number) :void {
     G.selectedPiece = G.cells[row][col]
     G.selectedRow = row
     G.selectedCol = col
 }
 
-function makeMove(G, row, col){
-    G.cells[row][col] = G.selectedPiece;
-    G.cells[G.selectedRow][G.selectedCol] = null;
-    if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])){
-        G.pieces[G.selectedPiece].value = -1
-    } else {
-        G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
+function makeMove(G:DouShouQiState, row:number, col:number){
+    if (G.selectedRow && G.selectedCol && G.selectedPiece) {
+        G.cells[row][col] = G.selectedPiece;
+        G.cells[G.selectedRow][G.selectedCol] = null;
+        if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])) {
+            G.pieces[G.selectedPiece].value = -1
+        } else {
+            G.pieces[G.selectedPiece].value = G.pieces[G.selectedPiece].defaultValue
+        }
+        G.selectedPiece = null;
+        G.selectedRow = null;
+        G.selectedCol = null;
     }
-    G.selectedPiece = null;
-    G.selectedRow = null;
-    G.selectedCol = null;
 }
 
-function isEnemyTrap(playerNumber, [row, col]){
-    return TRAPS[1-playerNumber].some(a => (a[0]===parseInt(row) && a[1]===parseInt(col)))
+function isEnemyTrap(playerNumber:number, [row, col]:number[]){
+    return TRAPS[1-playerNumber].some(a => (a[0]===row && a[1]===col))
 }
 
-function isRiver([row, col]){
+function isRiver([row, col]:number[]){
     return RIVER.some(a => (a[0]===row && a[1]===col))
 }
 
-function isFriendlyDen(pieces, piece, [row, col]){
+function isFriendlyDen(pieces:PiecesType, piece:string, [row, col]:number[]){
     return DENS[pieces[piece].playerNumber].some(a => (a[0]===row && a[1]===col))
 }
 
-function firstPieceCanCaptureSecondPiece(pieces, piece1, piece2){
+function firstPieceCanCaptureSecondPiece(pieces:PiecesType, piece1:string, piece2:string){
     if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
         if (pieces[piece1].value===0 && pieces[piece2].value===7){
             return true
@@ -83,14 +98,14 @@ function firstPieceCanCaptureSecondPiece(pieces, piece1, piece2){
     return false
 }
 
-function checkValidSquare(board, pieces, piece, [row, col]){
+function checkValidSquare(board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]){
     if (board[row][col] !== null){
-        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col])
+        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
     }
     return true
 }
 
-function getReachableInOneDirection(board, pieces, piece, [row, col], [rowChange, colChange]) {
+function getReachableInOneDirection(board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[], [rowChange, colChange]:number[]) {
     if (!isRiver([row+rowChange, col+colChange])){
         if (!isFriendlyDen(pieces, piece, [row+rowChange, col+colChange])){
             return [row+rowChange, col+colChange]
@@ -119,7 +134,7 @@ function getReachableInOneDirection(board, pieces, piece, [row, col], [rowChange
     }
     return null
 }
-function getReachableSquares(board, pieces, piece, [row, col]){
+function getReachableSquares(board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]){
     let reachableSquares = []
     if (row>0){
         let reachableSquare = getReachableInOneDirection(board, pieces, piece, [row,col], [-1,0])
@@ -143,8 +158,8 @@ function getReachableSquares(board, pieces, piece, [row, col]){
     return reachableSquares
 }
 
-export function getPossibleMoves(board, pieces, piece, [selectedRow, selectedCol]){
-    let possibleMoves = []
+export function getPossibleMoves(board:BoardType, pieces:PiecesType, piece:string, [selectedRow, selectedCol]:number[]){
+    let possibleMoves:number[][] = []
     let reachableSquares = getReachableSquares(board, pieces, piece, [selectedRow, selectedCol])
     reachableSquares.forEach( ([row,col]) => {if (checkValidSquare(board, pieces, piece, [row, col])) possibleMoves.push([row, col])} )
     return possibleMoves

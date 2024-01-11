@@ -7,19 +7,20 @@ let defaultPlayerOneTraps = [[8,2],[8,4],[7,3]]
 let defaultPlayerOneDen = [[8,3]]
 let defaultRiver = [[3,1], [3,2], [4,1], [4,2], [5,1], [5,2], [3,4], [3,5], [4,4], [4,5], [5,4], [5,5]]
 
-export var NUMOFROW;
-export var NUMOFCOL;
-export var BOARD;
-export var TRAPS;
-export var DENS;
-export var RIVER;
+export type BoardType = (string|null)[][];
+export type PlayerSquareType = {[key: number]: number[][]}
+export var NUMOFROW : number;
+export var NUMOFCOL : number;
+export var BOARD : BoardType ;
+export var TRAPS : PlayerSquareType;
+export var DENS : PlayerSquareType;
+export var RIVER : number[][];
+export var TERRAIN : BoardType;
 
-export var TERRAIN;
-
-export function createNullBoard() {
+export function createNullBoard() : BoardType {
     return new Array(NUMOFROW).fill(null).map(() => new Array(NUMOFCOL).fill(null))
 }
-function initialiseBoard(pieceOrder, piecePosition){
+function initialiseBoard(pieceOrder:string[], piecePosition:number[][]){
     let board = createNullBoard();
     for (let i=0; i<piecePosition.length; i++){
         board[piecePosition[i][0]][piecePosition[i][1]] = pieceOrder[i]+'0';
@@ -39,31 +40,31 @@ function initialiseTerrain(){
 }
 
 
-let reflectPosition = ([row, col]) => ([NUMOFROW-1-row, NUMOFCOL-1-col])
+let reflectPosition = ([row, col]:number[]):number[] => ([NUMOFROW-1-row, NUMOFCOL-1-col])
 
-function initialiseTraps(onePlayerTraps) {
+function initialiseTraps(onePlayerTraps:number[][]):PlayerSquareType {
     return({
         0 : onePlayerTraps,
         1 : onePlayerTraps.map(reflectPosition)
     })
 }
 
-function initialiseDen(onePlayerDen){
+function initialiseDen(onePlayerDen:number[][]):PlayerSquareType{
     return({
         0 : onePlayerDen,
         1 : onePlayerDen.map(reflectPosition)
     })
 }
 
-function initialiseRiver(river) {
+function initialiseRiver(river:number[][]) {
     return river
 }
 
-function initialiseNumRow(numRow) {return numRow}
+function initialiseNumRow(numRow:number) {return numRow}
 
-function initialiseNumCol(numCol) {return numCol}
+function initialiseNumCol(numCol:number) {return numCol}
 
-function shuffleArray(array) {
+function shuffleArray<T>(array:T[]) {
     for (let i = array.length - 1; i > 0; i--) {
         let j = Math.floor(Math.random() * (i + 1));
         let temp = array[i];
@@ -91,6 +92,6 @@ export function initialiseSettings(numRow=defaultNumRow,
 }
 
 export function randomPieceSetting(){
-    let pieceOrder = shuffleArray(defaultPieceOrder)
+    let pieceOrder = shuffleArray<string>(defaultPieceOrder)
     initialiseSettings(undefined, undefined, pieceOrder)
 }

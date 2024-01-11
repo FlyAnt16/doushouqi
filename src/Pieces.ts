@@ -1,6 +1,11 @@
-
 class Piece{
-    constructor(value, canEnterRiver, canCrossRiver, playerNumber) {
+    readonly defaultValue : number;
+    value : number;
+    readonly canEnterRiver : boolean;
+    readonly canCrossRiver : boolean;
+    readonly playerNumber : number
+
+    constructor(value:number, canEnterRiver:boolean, canCrossRiver:boolean, playerNumber:number) {
         this.defaultValue = value;
         this.value = value;
         this.canEnterRiver = canEnterRiver;
@@ -9,7 +14,11 @@ class Piece{
     }
 }
 
-export const Pieces = {
+export type PiecesType = {
+    [key: string] : Piece;
+};
+
+export const Pieces:PiecesType = {
     'elephant0' : new Piece(7,false, false, 0),
     'lion0' : new Piece(6, false, true, 0),
     'tiger0' : new Piece(5,false, true, 0),
@@ -28,3 +37,4 @@ export const Pieces = {
     'rat1' : new Piece(0, true, false, 1)
 }
 
+console.log(JSON.parse(JSON.stringify(Pieces)))
