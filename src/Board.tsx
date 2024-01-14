@@ -11,9 +11,13 @@ import dog from './images/dog0.png'
 import cat from './images/cat0.png'
 import rat from './images/rat0.png'
 import {BoardProps} from "boardgame.io/react";
+import {Ctx} from "boardgame.io";
+
+const reflectRow = (row:number, playerID:string) => playerID==='0' ? row : NUMOFROW-1-row
+const reflectCol = (col:number, playerID:string) => playerID==='0' ? col : NUMOFCOL-1-col
 
 interface DouShouQiProps extends BoardProps<DouShouQiState>{}
-export function Board({ctx, G, moves}:DouShouQiProps) {
+export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
     const onClick = (id:number) => {
         let row = Math.floor(id / NUMOFCOL);
         let col = id - row * NUMOFCOL;
@@ -25,46 +29,44 @@ export function Board({ctx, G, moves}:DouShouQiProps) {
     let possibleMovesBoard = createNullBoard()
     possibleMoves.forEach( ([row, col]) => possibleMovesBoard[row][col]='possibleMove')
 
-
-    let tbody = []
-    for (let i=0; i<NUMOFROW; i++){
-        let cells = [];
-        for (let j=0; j<NUMOFCOL; j++){
-            const id = NUMOFCOL*i+j;
-            cells.push(
-                <td key={id}>
-                    <button className={["cell", TERRAIN[i][j], G.cells[i][j], possibleMovesBoard[i][j]].join(" ")} onClick={() => onClick(id)}></button>
-                </td>
-            )
-        }
-        tbody.push(<tr key={i}>{cells}</tr>);
-    }
-
     return(
-        <div>
+        <div className={'screen'}>
             <div>
                 <table id="board">
-                    <tbody>{tbody}</tbody>
+                    <tbody>
+                    {[...Array(NUMOFROW).keys()].map((row) =>
+                        <tr key={row}>
+                            {[...Array(NUMOFCOL).keys()].map(col => {
+                                // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
+                                let playerRow = reflectRow(row, ctx.currentPlayer as string)
+                                let playerCol = reflectCol(col, ctx.currentPlayer as string)
+                                return <td key={row * NUMOFCOL + col}>
+                                    <button className={["cell", TERRAIN[playerRow][playerCol], G.cells[playerRow][playerCol], possibleMovesBoard[playerRow][playerCol]].join(" ")}
+                                            onClick={() => onClick(playerRow*NUMOFCOL+playerCol)}></button>
+                                </td>})}
+                        </tr>
+                    )}
+                    </tbody>
                 </table>
             </div>
             <div className='pieceOrder'>
                 Piece order:
                 <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
-                {'>'}
+                &gt;
                 <img alt='lion' width={'40px'} height={'40px'} src={lion}/>
-                {'>'}
+                &gt;
                 <img alt='tiger' width={'40px'} height={'40px'} src={tiger}/>
-                {'>'}
+                &gt;
                 <img alt='panther' width={'40px'} height={'40px'} src={panther}/>
-                {'>'}
+                &gt;
                 <img alt='wolf' width={'40px'} height={'40px'} src={wolf}/>
-                {'>'}
+                &gt;
                 <img alt='dog' width={'40px'} height={'40px'} src={dog}/>
-                {'>'}
+                &gt;
                 <img alt='cat' width={'40px'} height={'40px'} src={cat}/>
-                {'>'}
+                &gt;
                 <img alt='rat' width={'40px'} height={'40px'} src={rat}/>
-                {'>'}
+                &gt;
                 <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
             </div>
         </div>

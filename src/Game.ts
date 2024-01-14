@@ -69,39 +69,35 @@ function makeMove(G:DouShouQiState, row:number, col:number){
     }
 }
 
-function isEnemyTrap(playerNumber:number, [row, col]:number[]){
-    return TRAPS[1-playerNumber].some(a => (a[0]===row && a[1]===col))
-}
+const isEnemyTrap = (playerNumber:number, [row, col]:number[]) => TRAPS[1-playerNumber].some(a => (a[0]===row && a[1]===col))
 
-function isRiver([row, col]:number[]){
-    return RIVER.some(a => (a[0]===row && a[1]===col))
-}
+const isRiver = ([row, col]:number[]) => RIVER.some(a => (a[0]===row && a[1]===col))
 
-function isFriendlyDen(pieces:PiecesType, piece:string, [row, col]:number[]){
-    return DENS[pieces[piece].playerNumber].some(a => (a[0]===row && a[1]===col))
-}
+const isFriendlyDen = (pieces:PiecesType, piece:string, [row, col]:number[]) => DENS[pieces[piece].playerNumber].some(a => (a[0]===row && a[1]===col))
 
-function firstPieceCanCaptureSecondPiece(pieces:PiecesType, piece1:string, piece2:string){
-    if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
-        if (pieces[piece1].value===0 && pieces[piece2].value===7){
-            return true
-        } else{
-            if (pieces[piece1].value===7 && pieces[piece2].value===0){
-                return false
-            } else {
-                return pieces[piece1].value>=pieces[piece2].value
-            }
-        }
-    }
-    return false
-}
+const firstPieceCanCaptureSecondPiece  = (pieces:PiecesType, piece1:string, piece2:string) =>
+    pieces[piece1].playerNumber!==pieces[piece2].playerNumber && ((pieces[piece1].value===0 && pieces[piece2].value===7) || (!(pieces[piece1].value===7 && pieces[piece2].value===0) && pieces[piece1].value>=pieces[piece2].value))
+// if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
+//     if (pieces[piece1].value===0 && pieces[piece2].value===7){
+//         return true
+//     } else{
+//         if (pieces[piece1].value===7 && pieces[piece2].value===0){
+//             return false
+//         } else {
+//             return pieces[piece1].value>=pieces[piece2].value
+//         }
+//     }
+// }
+// return false
 
-function checkValidSquare(board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]){
-    if (board[row][col] !== null){
-        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
-    }
-    return true
-}
+const checkValidSquare = (board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]) =>
+board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+
+// if (board[row][col] !== null){
+//     return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+// }
+// return true
+// }
 
 function getReachableInOneDirection(board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[], [rowChange, colChange]:number[]) {
     if (!isRiver([row+rowChange, col+colChange])){
