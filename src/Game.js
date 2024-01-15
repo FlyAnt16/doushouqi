@@ -1,19 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPossibleMoves = exports.DouSHouQi = void 0;
+exports.computePossibleMoves = exports.getPossibleMoves = exports.DouSHouQi = void 0;
 const Customise_1 = require("./Customise");
-const Pieces_1 = require("./Pieces");
+const setup_1 = require("./setup");
 exports.DouSHouQi = {
-    setup: () => {
-        (0, Customise_1.initialiseSettings)();
-        return {
-            selectedPiece: null,
-            selectedRow: null,
-            selectedCol: null,
-            cells: Object.assign([], Customise_1.BOARD),
-            pieces: Object.assign({}, JSON.parse(JSON.stringify(Pieces_1.Pieces))),
-        };
-    },
+    name: 'dou-shou-qi',
+    setup: setup_1.setup,
     moves: {
         onClick: ({ G, playerID, events }, row, col) => {
             let selected = G.cells[row][col];
@@ -22,7 +14,7 @@ exports.DouSHouQi = {
             }
             else {
                 if (G.selectedPiece && (G.selectedRow !== null) && (G.selectedCol !== null)) {
-                    let possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol]);
+                    let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
                     if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
                         makeMove(G, row, col);
                         events.endTurn();
@@ -46,7 +38,7 @@ function makeMove(G, row, col) {
     if ((G.selectedRow !== null) && (G.selectedCol !== null) && G.selectedPiece) {
         G.cells[row][col] = G.selectedPiece;
         G.cells[G.selectedRow][G.selectedCol] = null;
-        if (isEnemyTrap(G.pieces[G.selectedPiece].playerNumber, [row, col])) {
+        if (isEnemyTrap(G.traps, G.pieces[G.selectedPiece].playerNumber, [row, col])) {
             G.pieces[G.selectedPiece].value = -1;
         }
         else {
@@ -55,42 +47,34 @@ function makeMove(G, row, col) {
         G.selectedPiece = null;
         G.selectedRow = null;
         G.selectedCol = null;
+        G.possibleMovesLookUp = computePossibleMoves(G.cells, G.rivers, G.dens, G.pieces);
     }
 }
-function isEnemyTrap(playerNumber, [row, col]) {
-    return Customise_1.TRAPS[1 - playerNumber].some(a => (a[0] === row && a[1] === col));
-}
-function isRiver([row, col]) {
-    return Customise_1.RIVER.some(a => (a[0] === row && a[1] === col));
-}
-function isFriendlyDen(pieces, piece, [row, col]) {
-    return Customise_1.DENS[pieces[piece].playerNumber].some(a => (a[0] === row && a[1] === col));
-}
-function firstPieceCanCaptureSecondPiece(pieces, piece1, piece2) {
-    if (pieces[piece1].playerNumber !== pieces[piece2].playerNumber) {
-        if (pieces[piece1].value === 0 && pieces[piece2].value === 7) {
-            return true;
-        }
-        else {
-            if (pieces[piece1].value === 7 && pieces[piece2].value === 0) {
-                return false;
-            }
-            else {
-                return pieces[piece1].value >= pieces[piece2].value;
-            }
-        }
-    }
-    return false;
-}
-function checkValidSquare(board, pieces, piece, [row, col]) {
-    if (board[row][col] !== null) {
-        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
-    }
-    return true;
-}
-function getReachableInOneDirection(board, pieces, piece, [row, col], [rowChange, colChange]) {
-    if (!isRiver([row + rowChange, col + colChange])) {
-        if (!isFriendlyDen(pieces, piece, [row + rowChange, col + colChange])) {
+const isEnemyTrap = (traps, playerNumber, [row, col]) => traps[1 - playerNumber].some(a => (a[0] === row && a[1] === col));
+const isRiver = (rivers, [row, col]) => rivers.some(a => (a[0] === row && a[1] === col));
+const isFriendlyDen = (dens, pieces, piece, [row, col]) => dens[pieces[piece].playerNumber].some(a => (a[0] === row && a[1] === col));
+const firstPieceCanCaptureSecondPiece = (pieces, piece1, piece2) => pieces[piece1].playerNumber !== pieces[piece2].playerNumber && ((pieces[piece1].value === 0 && pieces[piece2].value === 7) || (!(pieces[piece1].value === 7 && pieces[piece2].value === 0) && pieces[piece1].value >= pieces[piece2].value));
+// if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
+//     if (pieces[piece1].value===0 && pieces[piece2].value===7){
+//         return true
+//     } else{
+//         if (pieces[piece1].value===7 && pieces[piece2].value===0){
+//             return false
+//         } else {
+//             return pieces[piece1].value>=pieces[piece2].value
+//         }
+//     }
+// }
+// return false
+const checkValidSquare = (board, pieces, piece, [row, col]) => board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
+// if (board[row][col] !== null){
+//     return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+// }
+// return true
+// }
+function getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [rowChange, colChange]) {
+    if (!isRiver(rivers, [row + rowChange, col + colChange])) {
+        if (!isFriendlyDen(dens, pieces, piece, [row + rowChange, col + colChange])) {
             return [row + rowChange, col + colChange];
         }
     }
@@ -103,7 +87,7 @@ function getReachableInOneDirection(board, pieces, piece, [row, col], [rowChange
                 let endRow = row + rowChange;
                 let endCol = col + colChange;
                 let blocked = false;
-                while (isRiver([endRow, endCol])) {
+                while (isRiver(rivers, [endRow, endCol])) {
                     if (board[endRow][endCol] !== null) {
                         blocked = true;
                         break;
@@ -119,35 +103,48 @@ function getReachableInOneDirection(board, pieces, piece, [row, col], [rowChange
     }
     return null;
 }
-function getReachableSquares(board, pieces, piece, [row, col]) {
+function getReachableSquares(board, rivers, dens, pieces, piece, [row, col]) {
     let reachableSquares = [];
     if (row > 0) {
-        let reachableSquare = getReachableInOneDirection(board, pieces, piece, [row, col], [-1, 0]);
+        let reachableSquare = getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [-1, 0]);
         if (reachableSquare)
             reachableSquares.push(reachableSquare);
     }
     if (row < Customise_1.NUMOFROW - 1) {
-        let reachableSquare = getReachableInOneDirection(board, pieces, piece, [row, col], [1, 0]);
+        let reachableSquare = getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [1, 0]);
         if (reachableSquare)
             reachableSquares.push(reachableSquare);
     }
     if (col > 0) {
-        let reachableSquare = getReachableInOneDirection(board, pieces, piece, [row, col], [0, -1]);
+        let reachableSquare = getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [0, -1]);
         if (reachableSquare)
             reachableSquares.push(reachableSquare);
     }
     if (col < Customise_1.NUMOFCOL - 1) {
-        let reachableSquare = getReachableInOneDirection(board, pieces, piece, [row, col], [0, 1]);
+        let reachableSquare = getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [0, 1]);
         if (reachableSquare)
             reachableSquares.push(reachableSquare);
     }
     return reachableSquares;
 }
-function getPossibleMoves(board, pieces, piece, [selectedRow, selectedCol]) {
+function getPossibleMoves(board, rivers, dens, pieces, piece, [selectedRow, selectedCol]) {
     let possibleMoves = [];
-    let reachableSquares = getReachableSquares(board, pieces, piece, [selectedRow, selectedCol]);
+    let reachableSquares = getReachableSquares(board, rivers, dens, pieces, piece, [selectedRow, selectedCol]);
     reachableSquares.forEach(([row, col]) => { if (checkValidSquare(board, pieces, piece, [row, col]))
         possibleMoves.push([row, col]); });
     return possibleMoves;
 }
 exports.getPossibleMoves = getPossibleMoves;
+function computePossibleMoves(board, rivers, dens, pieces) {
+    const movesObject = {};
+    for (let row = 0; row < Customise_1.NUMOFROW; row++) {
+        for (let col = 0; col < Customise_1.NUMOFCOL; col++) {
+            let piece = board[row][col];
+            if (piece) {
+                movesObject[piece] = getPossibleMoves(board, rivers, dens, pieces, piece, [row, col]);
+            }
+        }
+    }
+    return movesObject;
+}
+exports.computePossibleMoves = computePossibleMoves;

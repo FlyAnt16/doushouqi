@@ -1,7 +1,6 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import './Board.css';
-import {createNullBoard, NUMOFCOL, NUMOFROW, TERRAIN} from "./Customise";
-import {DouShouQiState, getPossibleMoves} from "./Game";
+import {DouShouQiState} from "./Game";
 import elephant from './images/elephant0.png'
 import lion from './images/lion0.png'
 import tiger from './images/tiger0.png'
@@ -11,38 +10,46 @@ import dog from './images/dog0.png'
 import cat from './images/cat0.png'
 import rat from './images/rat0.png'
 import {BoardProps} from "boardgame.io/react";
-import {Ctx} from "boardgame.io";
+import {createNullBoard, PlayerSquareType} from "./setup";
 
-const reflectRow = (row:number, playerID:string) => playerID==='0' ? row : NUMOFROW-1-row
-const reflectCol = (col:number, playerID:string) => playerID==='0' ? col : NUMOFCOL-1-col
+const reflectRow = (numOfRow:number, row:number, playerID:string) => playerID==='0' ? row : numOfRow-1-row
+const reflectCol = (numOfCol:number, col:number, playerID:string) => playerID==='0' ? col : numOfCol-1-col
 
 interface DouShouQiProps extends BoardProps<DouShouQiState>{}
+
+function initialiseTerrain(numOfRow:number, numOfCol:number, traps:PlayerSquareType, dens:PlayerSquareType, rivers:number[][]){
+    let board = createNullBoard(numOfRow, numOfCol)
+    rivers.forEach( ([row,col]) => board[row][col]='river')
+    traps[0].forEach(([row, col]) => board[row][col]='trap0')
+    traps[1].forEach(([row, col]) => board[row][col]='trap1')
+    dens[0].forEach(([row, col]) => board[row][col]='den0')
+    dens[1].forEach(([row, col]) => board[row][col]='den1')
+    return board
+}
+
+const isPossibleMove = (possibleMoves:number[][], [row,col]:number[]) => possibleMoves.some(a => (a[0]===row && a[1]===col))
 export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
+    const terrain = useMemo(() => initialiseTerrain(G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers), [G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers]);
     const onClick = (id:number) => {
-        let row = Math.floor(id / NUMOFCOL);
-        let col = id - row * NUMOFCOL;
+        let row = Math.floor(id / G.numOfRow);
+        let col = id - row * G.numOfCol;
         return moves.onClick(row,col)
     }
-
-    let possibleMoves:number[][] = []
-    if (G.selectedPiece && (G.selectedRow!==null) && (G.selectedCol!==null)) possibleMoves = getPossibleMoves(G.cells, G.pieces, G.selectedPiece, [G.selectedRow, G.selectedCol])
-    let possibleMovesBoard = createNullBoard()
-    possibleMoves.forEach( ([row, col]) => possibleMovesBoard[row][col]='possibleMove')
 
     return(
         <div className={'screen'}>
             <div>
                 <table id="board">
                     <tbody>
-                    {[...Array(NUMOFROW).keys()].map((row) =>
+                    {[...Array(G.numOfRow).keys()].map((row) =>
                         <tr key={row}>
-                            {[...Array(NUMOFCOL).keys()].map(col => {
+                            {[...Array(G.numOfCol).keys()].map(col => {
                                 // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                                let playerRow = reflectRow(row, ctx.currentPlayer as string)
-                                let playerCol = reflectCol(col, ctx.currentPlayer as string)
-                                return <td key={row * NUMOFCOL + col}>
-                                    <button className={["cell", TERRAIN[playerRow][playerCol], G.cells[playerRow][playerCol], possibleMovesBoard[playerRow][playerCol]].join(" ")}
-                                            onClick={() => onClick(playerRow*NUMOFCOL+playerCol)}></button>
+                                let playerRow = reflectRow(G.numOfRow, row, playerID as string)
+                                let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                                return <td key={row * G.numOfCol + col}>
+                                    <button className={["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece?isPossibleMove(G.possibleMovesLookUp[G.selectedPiece],[playerRow,playerCol])?"possibleMove":null:null].join(" ")}
+                                            onClick={() => onClick(playerRow*G.numOfCol+playerCol)}></button>
                                 </td>})}
                         </tr>
                     )}
