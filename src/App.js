@@ -7,7 +7,6 @@ require("./App.css");
 const Game_1 = require("./Game");
 const react_1 = require("boardgame.io/react");
 const Board_1 = require("./Board");
-const Customise_1 = require("./Customise");
 const multiplayer_1 = require("boardgame.io/multiplayer");
 const react_2 = require("react");
 const Welcome_1 = require("./Welcome");
@@ -30,7 +29,6 @@ function App() {
     }
     switch (page) {
         case 'Welcome':
-            (0, Customise_1.initialiseSettings)();
             return react_3.default.createElement(Welcome_1.WelcomePage, { onClick: onClick });
         case 'Game':
             return react_3.default.createElement(DouShouQiSingle, null);

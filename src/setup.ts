@@ -23,9 +23,6 @@ function initialiseBoard(numOfRow:number, numOfCol:number, pieceOrder:string[], 
     return board;
 }
 
-
-
-
 let reflectPosition = (numOfRow:number, numOfCol:number, [row, col]:number[]):number[] => ([numOfRow-1-row, numOfCol-1-col])
 
 const initialiseTraps = (numOfRow:number, numOfCol:number, onePlayerTraps:number[][]):PlayerSquareType => ({
@@ -78,7 +75,7 @@ export function initialiseSettings(numRow=defaultNumRow,
         selectedRow : null,
         selectedCol : null,
         pieces : Object.assign({}, JSON.parse(JSON.stringify(Pieces))),
-        possibleMovesLookUp : computePossibleMoves(board, rivers, dens, JSON.parse(JSON.stringify(Pieces)))
+        possibleMovesLookUp : computePossibleMoves(board, numOfRow, numOfCol, rivers, dens, JSON.parse(JSON.stringify(Pieces)))
     }
 }
 

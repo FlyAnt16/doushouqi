@@ -29,7 +29,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Board = void 0;
 const react_1 = __importStar(require("react"));
 require("./Board.css");
-const Customise_1 = require("./Customise");
 const elephant0_png_1 = __importDefault(require("./images/elephant0.png"));
 const lion0_png_1 = __importDefault(require("./images/lion0.png"));
 const tiger0_png_1 = __importDefault(require("./images/tiger0.png"));
@@ -39,8 +38,8 @@ const dog0_png_1 = __importDefault(require("./images/dog0.png"));
 const cat0_png_1 = __importDefault(require("./images/cat0.png"));
 const rat0_png_1 = __importDefault(require("./images/rat0.png"));
 const setup_1 = require("./setup");
-const reflectRow = (row, playerID) => playerID === '0' ? row : Customise_1.NUMOFROW - 1 - row;
-const reflectCol = (col, playerID) => playerID === '0' ? col : Customise_1.NUMOFCOL - 1 - col;
+const reflectRow = (numOfRow, row, playerID) => playerID === '0' ? row : numOfRow - 1 - row;
+const reflectCol = (numOfCol, col, playerID) => playerID === '0' ? col : numOfCol - 1 - col;
 function initialiseTerrain(numOfRow, numOfCol, traps, dens, rivers) {
     let board = (0, setup_1.createNullBoard)(numOfRow, numOfCol);
     rivers.forEach(([row, col]) => board[row][col] = 'river');
@@ -54,8 +53,8 @@ const isPossibleMove = (possibleMoves, [row, col]) => possibleMoves.some(a => (a
 function Board({ ctx, G, moves, playerID }) {
     const terrain = (0, react_1.useMemo)(() => initialiseTerrain(G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers), [G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers]);
     const onClick = (id) => {
-        let row = Math.floor(id / Customise_1.NUMOFCOL);
-        let col = id - row * Customise_1.NUMOFCOL;
+        let row = Math.floor(id / G.numOfRow);
+        let col = id - row * G.numOfCol;
         return moves.onClick(row, col);
     };
     return (react_1.default.createElement("div", { className: 'screen' },
@@ -63,8 +62,8 @@ function Board({ ctx, G, moves, playerID }) {
             react_1.default.createElement("table", { id: "board" },
                 react_1.default.createElement("tbody", null, [...Array(G.numOfRow).keys()].map((row) => react_1.default.createElement("tr", { key: row }, [...Array(G.numOfCol).keys()].map(col => {
                     // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                    let playerRow = reflectRow(row, playerID);
-                    let playerCol = reflectCol(col, playerID);
+                    let playerRow = reflectRow(G.numOfRow, row, playerID);
+                    let playerCol = reflectCol(G.numOfCol, col, playerID);
                     return react_1.default.createElement("td", { key: row * G.numOfCol + col },
                         react_1.default.createElement("button", { className: ["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece ? isPossibleMove(G.possibleMovesLookUp[G.selectedPiece], [playerRow, playerCol]) ? "possibleMove" : null : null].join(" "), onClick: () => onClick(playerRow * G.numOfCol + playerCol) }));
                 })))))),
