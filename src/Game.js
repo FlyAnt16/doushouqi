@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.computePossibleMoves = exports.getPossibleMoves = exports.DouSHouQi = void 0;
+exports.computePossibleMoves = exports.getPossibleMoves = exports.isEnemyTrap = exports.DouSHouQiSinglePlayer = exports.DouSHouQi = void 0;
 const setup_1 = require("./setup");
+const bot_1 = require("./bot");
 exports.DouSHouQi = {
     name: 'dou-shou-qi',
     setup: setup_1.setup,
@@ -26,6 +27,31 @@ exports.DouSHouQi = {
         }
     },
 };
+exports.DouSHouQiSinglePlayer = {
+    setup: setup_1.setup,
+    moves: {
+        onClick: ({ G, playerID, events }, row, col) => {
+            let selected = G.cells[row][col];
+            if (selected && (G.pieces[selected].playerNumber === parseInt(playerID))) {
+                selectFriendlyPiece(G, row, col);
+            }
+            else if (G.selectedPiece && (G.selectedRow !== null) && (G.selectedCol !== null)) {
+                let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
+                if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
+                    makeMove(G, row, col);
+                    (0, bot_1.botAction)(G, '1');
+                    G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces);
+                    events.endTurn();
+                }
+            }
+        }
+    },
+    endIf: ({ G, ctx }) => {
+        if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null))) {
+            return { winner: ctx.currentPlayer };
+        }
+    },
+};
 function selectFriendlyPiece(G, row, col) {
     G.selectedPiece = G.cells[row][col];
     G.selectedRow = row;
@@ -35,7 +61,7 @@ function makeMove(G, row, col) {
     if ((G.selectedRow !== null) && (G.selectedCol !== null) && G.selectedPiece) {
         G.cells[row][col] = G.selectedPiece;
         G.cells[G.selectedRow][G.selectedCol] = null;
-        if (isEnemyTrap(G.traps, G.pieces[G.selectedPiece].playerNumber, [row, col])) {
+        if ((0, exports.isEnemyTrap)(G.traps, G.pieces[G.selectedPiece].playerNumber, [row, col])) {
             G.pieces[G.selectedPiece].value = -1;
         }
         else {
@@ -44,14 +70,15 @@ function makeMove(G, row, col) {
         G.selectedPiece = null;
         G.selectedRow = null;
         G.selectedCol = null;
-        G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfRow, G.rivers, G.dens, G.pieces);
+        G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces);
     }
 }
 const isEnemyTrap = (traps, playerNumber, [row, col]) => traps[1 - playerNumber].some(a => (a[0] === row && a[1] === col));
+exports.isEnemyTrap = isEnemyTrap;
 const isRiver = (rivers, [row, col]) => rivers.some(a => (a[0] === row && a[1] === col));
 const isFriendlyDen = (dens, pieces, piece, [row, col]) => dens[pieces[piece].playerNumber].some(a => (a[0] === row && a[1] === col));
 const firstPieceCanCaptureSecondPiece = (pieces, piece1, piece2) => pieces[piece1].playerNumber !== pieces[piece2].playerNumber && ((pieces[piece1].value === 0 && pieces[piece2].value === 7) || (!(pieces[piece1].value === 7 && pieces[piece2].value === 0) && pieces[piece1].value >= pieces[piece2].value));
-// if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
+// {if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
 //     if (pieces[piece1].value===0 && pieces[piece2].value===7){
 //         return true
 //     } else{
@@ -62,13 +89,13 @@ const firstPieceCanCaptureSecondPiece = (pieces, piece1, piece2) => pieces[piece
 //         }
 //     }
 // }
-// return false
-const checkValidSquare = (board, pieces, piece, [row, col]) => board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
-// if (board[row][col] !== null){
-//     return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
-// }
-// return true
-// }
+// return false}
+const checkValidSquare = (board, pieces, piece, [row, col]) => {
+    if (board[row][col] !== null) {
+        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
+    }
+    return true;
+};
 function getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [rowChange, colChange]) {
     if (!isRiver(rivers, [row + rowChange, col + colChange])) {
         if (!isFriendlyDen(dens, pieces, piece, [row + rowChange, col + colChange])) {

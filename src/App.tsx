@@ -1,5 +1,5 @@
 import './App.css';
-import {DouSHouQi} from "./Game";
+import {DouSHouQi, DouSHouQiSinglePlayer} from "./Game";
 import {Client} from 'boardgame.io/react'
 import {Board} from "./Board";
 import {SocketIO} from "boardgame.io/multiplayer";
@@ -16,9 +16,15 @@ const DouShouQiClient = Client({
     multiplayer: SocketIO({ server }),
 })
 
-const DouShouQiSingle = Client({
+const DouShouQi = Client({
     game: DouSHouQi,
     board: Board,
+})
+
+const DouShouQiSingle = Client({
+    game: DouSHouQiSinglePlayer,
+    board: Board,
+    numPlayers : 1,
 })
 
 function App(){

@@ -31,7 +31,7 @@ const isPossibleMove = (possibleMoves:number[][], [row,col]:number[]) => possibl
 export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
     const terrain = useMemo(() => initialiseTerrain(G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers), [G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers]);
     const onClick = (id:number) => {
-        let row = Math.floor(id / G.numOfRow);
+        let row = Math.floor(id / G.numOfCol);
         let col = id - row * G.numOfCol;
         return moves.onClick(row,col)
     }
@@ -45,8 +45,10 @@ export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
                         <tr key={row}>
                             {[...Array(G.numOfCol).keys()].map(col => {
                                 // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                                let playerRow = reflectRow(G.numOfRow, row, playerID as string)
-                                let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                                // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
+                                // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                                let playerRow = row
+                                let playerCol = col
                                 return <td key={row * G.numOfCol + col}>
                                     <button className={["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece?isPossibleMove(G.possibleMovesLookUp[G.selectedPiece],[playerRow,playerCol])?"possibleMove":null:null].join(" ")}
                                             onClick={() => onClick(playerRow*G.numOfCol+playerCol)}></button>

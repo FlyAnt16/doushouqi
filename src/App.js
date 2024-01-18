@@ -18,9 +18,14 @@ const DouShouQiClient = (0, react_1.Client)({
     board: Board_1.Board,
     multiplayer: (0, multiplayer_1.SocketIO)({ server }),
 });
-const DouShouQiSingle = (0, react_1.Client)({
+const DouShouQi = (0, react_1.Client)({
     game: Game_1.DouSHouQi,
     board: Board_1.Board,
+});
+const DouShouQiSingle = (0, react_1.Client)({
+    game: Game_1.DouSHouQiSinglePlayer,
+    board: Board_1.Board,
+    numPlayers: 1,
 });
 function App() {
     const [page, setPage] = (0, react_2.useState)('Welcome');

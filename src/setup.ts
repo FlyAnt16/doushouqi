@@ -75,7 +75,7 @@ export function initialiseSettings(numRow=defaultNumRow,
         selectedRow : null,
         selectedCol : null,
         pieces : Object.assign({}, JSON.parse(JSON.stringify(Pieces))),
-        possibleMovesLookUp : computePossibleMoves(board, numOfRow, numOfCol, rivers, dens, JSON.parse(JSON.stringify(Pieces)))
+        possibleMovesLookUp : computePossibleMoves(board, numOfRow, numOfCol, rivers, dens, Object.assign({}, JSON.parse(JSON.stringify(Pieces))))
     }
 }
 

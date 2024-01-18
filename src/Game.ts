@@ -1,6 +1,7 @@
 import {PiecesType} from "./Pieces";
 import type {Ctx, Game} from "boardgame.io"
 import {BoardType, PlayerSquareType, setup} from "./setup";
+import {botAction} from "./bot";
 
 export interface DouShouQiState{
     numOfRow : number,
@@ -45,6 +46,33 @@ export const DouSHouQi :Game<DouShouQiState> = {
     },
 }
 
+export const DouSHouQiSinglePlayer : Game<DouShouQiState> = {
+    setup : setup,
+
+    moves : {
+        onClick : ({G, playerID, events}, row: number, col:number) => {
+            let selected = G.cells[row][col]
+            if (selected && (G.pieces[selected].playerNumber === parseInt(playerID))){
+                selectFriendlyPiece(G, row, col)
+            } else if (G.selectedPiece && (G.selectedRow!==null) && (G.selectedCol!==null)){
+                let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
+                if (possibleMoves.some(a => (a[0]===row && a[1]===col))){
+                    makeMove(G, row, col)
+                    botAction(G, '1')
+                    G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers,G.dens,G.pieces)
+                    events.endTurn();
+                }
+            }
+        }
+    },
+
+    endIf : ({G, ctx}) => {
+        if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null))){
+            return {winner: ctx.currentPlayer}
+        }
+    },
+}
+
 function selectFriendlyPiece(G:DouShouQiState, row:number, col:number) :void {
     G.selectedPiece = G.cells[row][col]
     G.selectedRow = row
@@ -63,11 +91,11 @@ function makeMove(G:DouShouQiState, row:number, col:number){
         G.selectedPiece = null;
         G.selectedRow = null;
         G.selectedCol = null;
-        G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfRow, G.rivers,G.dens,G.pieces)
+        G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers,G.dens,G.pieces)
     }
 }
 
-const isEnemyTrap = (traps:PlayerSquareType ,playerNumber:number, [row, col]:number[]) => traps[1-playerNumber].some(a => (a[0]===row && a[1]===col))
+export const isEnemyTrap = (traps:PlayerSquareType ,playerNumber:number, [row, col]:number[]) => traps[1-playerNumber].some(a => (a[0]===row && a[1]===col))
 
 const isRiver = (rivers:number[][], [row, col]:number[]) => rivers.some(a => (a[0]===row && a[1]===col))
 
@@ -75,7 +103,7 @@ const isFriendlyDen = (dens:PlayerSquareType, pieces:PiecesType, piece:string, [
 
 const firstPieceCanCaptureSecondPiece  = (pieces:PiecesType, piece1:string, piece2:string) =>
     pieces[piece1].playerNumber!==pieces[piece2].playerNumber && ((pieces[piece1].value===0 && pieces[piece2].value===7) || (!(pieces[piece1].value===7 && pieces[piece2].value===0) && pieces[piece1].value>=pieces[piece2].value))
-// if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
+// {if (pieces[piece1].playerNumber!==pieces[piece2].playerNumber){
 //     if (pieces[piece1].value===0 && pieces[piece2].value===7){
 //         return true
 //     } else{
@@ -86,16 +114,17 @@ const firstPieceCanCaptureSecondPiece  = (pieces:PiecesType, piece1:string, piec
 //         }
 //     }
 // }
-// return false
+// return false}
 
 const checkValidSquare = (board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]) =>
-board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+// board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
 
-// if (board[row][col] !== null){
-//     return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
-// }
-// return true
-// }
+{
+    if (board[row][col] !== null){
+        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+}
+return true
+}
 
 function getReachableInOneDirection(board:BoardType, rivers:number[][], dens:PlayerSquareType, pieces:PiecesType, piece:string, [row, col]:number[], [rowChange, colChange]:number[]) {
     if (!isRiver(rivers,[row+rowChange, col+colChange])){

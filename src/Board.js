@@ -53,7 +53,7 @@ const isPossibleMove = (possibleMoves, [row, col]) => possibleMoves.some(a => (a
 function Board({ ctx, G, moves, playerID }) {
     const terrain = (0, react_1.useMemo)(() => initialiseTerrain(G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers), [G.numOfRow, G.numOfCol, G.traps, G.dens, G.rivers]);
     const onClick = (id) => {
-        let row = Math.floor(id / G.numOfRow);
+        let row = Math.floor(id / G.numOfCol);
         let col = id - row * G.numOfCol;
         return moves.onClick(row, col);
     };
@@ -62,8 +62,10 @@ function Board({ ctx, G, moves, playerID }) {
             react_1.default.createElement("table", { id: "board" },
                 react_1.default.createElement("tbody", null, [...Array(G.numOfRow).keys()].map((row) => react_1.default.createElement("tr", { key: row }, [...Array(G.numOfCol).keys()].map(col => {
                     // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                    let playerRow = reflectRow(G.numOfRow, row, playerID);
-                    let playerCol = reflectCol(G.numOfCol, col, playerID);
+                    // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
+                    // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                    let playerRow = row;
+                    let playerCol = col;
                     return react_1.default.createElement("td", { key: row * G.numOfCol + col },
                         react_1.default.createElement("button", { className: ["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece ? isPossibleMove(G.possibleMovesLookUp[G.selectedPiece], [playerRow, playerCol]) ? "possibleMove" : null : null].join(" "), onClick: () => onClick(playerRow * G.numOfCol + playerCol) }));
                 })))))),
