@@ -15,6 +15,7 @@ export interface DouShouQiState{
     cells : BoardType,
     pieces : PiecesType,
     possibleMovesLookUp : { [key: string] : number[][]},
+    transposition : {[key:string] : number[][]}
 }
 
 
@@ -58,6 +59,7 @@ export const DouSHouQiSinglePlayer : Game<DouShouQiState> = {
                 let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
                 if (possibleMoves.some(a => (a[0]===row && a[1]===col))){
                     makeMove(G, row, col)
+                    if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null))) events.endTurn()
                     botAction(G, '1')
                     G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers,G.dens,G.pieces)
                     events.endTurn();
@@ -117,14 +119,14 @@ const firstPieceCanCaptureSecondPiece  = (pieces:PiecesType, piece1:string, piec
 // return false}
 
 const checkValidSquare = (board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]) =>
-// board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+    board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
 
-{
-    if (board[row][col] !== null){
-        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
-}
-return true
-}
+// {
+//     if (board[row][col] !== null){
+//         return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+// }
+// return true
+// }
 
 function getReachableInOneDirection(board:BoardType, rivers:number[][], dens:PlayerSquareType, pieces:PiecesType, piece:string, [row, col]:number[], [rowChange, colChange]:number[]) {
     if (!isRiver(rivers,[row+rowChange, col+colChange])){

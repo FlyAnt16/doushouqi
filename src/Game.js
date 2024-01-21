@@ -39,6 +39,8 @@ exports.DouSHouQiSinglePlayer = {
                 let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
                 if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
                     makeMove(G, row, col);
+                    if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null)))
+                        events.endTurn();
                     (0, bot_1.botAction)(G, '1');
                     G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces);
                     events.endTurn();
@@ -90,12 +92,13 @@ const firstPieceCanCaptureSecondPiece = (pieces, piece1, piece2) => pieces[piece
 //     }
 // }
 // return false}
-const checkValidSquare = (board, pieces, piece, [row, col]) => {
-    if (board[row][col] !== null) {
-        return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
-    }
-    return true;
-};
+const checkValidSquare = (board, pieces, piece, [row, col]) => board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col]);
+// {
+//     if (board[row][col] !== null){
+//         return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
+// }
+// return true
+// }
 function getReachableInOneDirection(board, rivers, dens, pieces, piece, [row, col], [rowChange, colChange]) {
     if (!isRiver(rivers, [row + rowChange, col + colChange])) {
         if (!isFriendlyDen(dens, pieces, piece, [row + rowChange, col + colChange])) {

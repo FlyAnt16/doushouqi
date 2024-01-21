@@ -2,7 +2,6 @@ import {BoardType, PlayerSquareType} from "./setup";
 import {computePossibleMoves, DouShouQiState, getPossibleMoves, isEnemyTrap} from "./Game";
 import {PiecesType} from "./Pieces";
 import {Game} from "boardgame.io";
-
 const pieceValues: {[key:string] : number} = {
     'elephantWithoutRat' : 10,
     'elephantWithRat' : 8,
@@ -15,6 +14,11 @@ const pieceValues: {[key:string] : number} = {
     'rat' : 2,
 }
 
+let timeToMove = 0;
+let timeInEvaluation = 0;
+let timeInComputeMove  = 0;
+let numOfNode = 0;
+
 const computeDistance = ([row,col]:number[],target:number[]) => Math.abs(target[0]-row) + Math.abs(target[1]-col);
 
 const distanceValue = (distance:number) => {
@@ -24,7 +28,7 @@ const distanceValue = (distance:number) => {
         case 1:
             return 10
         case 2:
-            return 4
+            return 5
         case 3:
             return 3
         case 4:
@@ -54,19 +58,20 @@ function locatePieces(board:BoardType, playerID:string):{[key:string]:number[]}{
     }
     return pieceCoordinates
 }
-function boardEvaluation(board:BoardType, playerID:string, dens:PlayerSquareType){
+export function boardEvaluation(board:BoardType, playerID:string, dens:PlayerSquareType){
+    let startTime = performance.now()
     let friendlyPieceCoordinates = locatePieces(board, String(1-parseInt(playerID)))
     let friendlyDenCoordinates = dens[1-parseInt(playerID)][0]
     let enemyPieceCoordinates = locatePieces(board, playerID)
     let enemyDenCoordinates = dens[parseInt(playerID)][0]
-    // return Object.entries(pieceCoordinates).map(([piece, coordinate]) =>
-    //     pieceValues[piece] * distanceValue(computeDistance(coordinate,enemyDenCoord))).reduce((accumulator, currentValue) =>{
-    // return accumulator + currentValue},0)
-    return Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) =>
+    let value = Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) =>
         pieceValues[piece]* distanceValue(computeDistance(coordinate,enemyDenCoordinates))).reduce((accumulator, currentValue) =>{
-    return accumulator + currentValue},0) - Object.entries(enemyPieceCoordinates).map(([piece, coordinate]) =>
+        return accumulator + currentValue},0) - Object.entries(enemyPieceCoordinates).map(([piece, coordinate]) =>
         pieceValues[piece]* distanceValue(computeDistance(coordinate,friendlyDenCoordinates))).reduce((accumulator, currentValue) =>{
         return accumulator + currentValue},0)
+    let endTime = performance.now()
+    timeInEvaluation += endTime - startTime
+    return value
 }
 
 function makeMove(board:BoardType, [initialRow, initialCol]:number[], pieces:PiecesType, [destinationRow, destinationCol]:number[], traps:PlayerSquareType, playerID:string):[BoardType, PiecesType]{
@@ -84,6 +89,7 @@ function makeMove(board:BoardType, [initialRow, initialCol]:number[], pieces:Pie
 }
 
 function computeFriendlyPossibleMoves(board:BoardType, numOfRow:number, numOfCol:number, rivers:number[][], dens:PlayerSquareType, pieces:PiecesType, playerID:string){
+    let startTime = performance.now()
     const movesArray:number[][][] = []
     for (let row=0; row<numOfRow; row++){
         for (let col=0; col<numOfCol; col++){
@@ -93,12 +99,14 @@ function computeFriendlyPossibleMoves(board:BoardType, numOfRow:number, numOfCol
             }
         }
     }
+    let endTime = performance.now()
+    timeInComputeMove += endTime - startTime
     return movesArray;
 }
 
 // assume bot is player 1 and user is player 0
-
 function findBestMove(G:DouShouQiState, botPlayerNumber:string):number[][]{
+    // if (boardToString(G.cells, G.numOfRow, G.numOfCol) in G.transposition) return G.transposition[boardToString(G.cells, G.numOfRow, G.numOfCol)]
     let moves = computeFriendlyPossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces, botPlayerNumber)
     let bestMove = -1000000
     let bestMoveFound = moves[0];
@@ -114,37 +122,31 @@ function findBestMove(G:DouShouQiState, botPlayerNumber:string):number[][]{
 }
 
 function minimax(currentDepth:number, maxDepth:number, isMax:boolean, alpha:number, beta:number, [board, pieces]:[BoardType, PiecesType], numOfRow:number, numOfCol:number, rivers:number[][], dens:PlayerSquareType, traps:PlayerSquareType){
+    numOfNode += 1
     let currentPlayer:string;
     if (isMax)
         currentPlayer='1'
     else
         currentPlayer='0'
 
-    if (currentDepth === maxDepth)
+    if (currentDepth === maxDepth) {
         return boardEvaluation(board, currentPlayer, dens)
-    let moves = computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, currentPlayer)
+    }
 
+    let moves = computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, currentPlayer)
     if (isMax){
         let bestMove = -100000
         for (let i=0; i<moves.length; i++){
-            //compute value
-            // update bestMove
             bestMove = Math.max(bestMove, minimax(currentDepth+1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps))
-            // update alpha
             alpha = Math.max(bestMove, alpha)
-            // check for early stopping
             if (beta <= alpha) break
         }
         return bestMove
     } else {
         let bestMove = 100000
         for (let i=0; i<moves.length; i++){
-            // compute value
-            // update bestMove
             bestMove = Math.min(bestMove, minimax(currentDepth+1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps))
-            // update beta
             beta = Math.min(bestMove, beta)
-            // check for early stopping
             if (beta <= alpha) break
         }
         return bestMove
@@ -152,7 +154,13 @@ function minimax(currentDepth:number, maxDepth:number, isMax:boolean, alpha:numb
 }
 
 export function botAction(G:DouShouQiState, botPlayerNumber:string){
+    let startTime = performance.now()
+    timeInEvaluation = 0
+    timeInComputeMove = 0
+    numOfNode = 0
+
     let move = findBestMove(G, botPlayerNumber)
+    // G.transposition[boardToString(G.cells,G.numOfRow, G.numOfCol)] = move
     let [initialRow, initialCol] = move[0]
     let [destinationRow, destinationCol] = move[1]
     let selectedPiece = G.cells[initialRow][initialCol] as string
@@ -164,6 +172,44 @@ export function botAction(G:DouShouQiState, botPlayerNumber:string){
     } else{
         G.pieces[selectedPiece].value = G.pieces[selectedPiece].defaultValue
     }
+    let endTime = performance.now()
+    console.log('total time:',endTime - startTime)
+    console.log('time in evaluation:',timeInEvaluation)
+    console.log('time in compute move:',timeInComputeMove)
+    console.log('number of nodes searched:',numOfNode)
+}
+
+function pieceToDigit(piece:string){
+    switch (piece){
+        case 'elephant':
+            return '9'
+        case 'lion':
+            return '8'
+        case 'tiger':
+            return '7'
+        case 'panther':
+            return '6'
+        case 'wolf':
+            return '5'
+        case 'dog':
+            return '4'
+        case 'cat':
+            return '3'
+        case 'rat':
+            return '2'
+    }
+}
+
+function boardToString(board:BoardType, numOfRow:number, numOfCol:number):string{
+    let boardString = ''
+    for (let row=0;row<numOfRow;row++){
+        for (let col=0;col<numOfCol;col++){
+            let piece = board[row][col]
+            if (piece) boardString = boardString + pieceToDigit(piece.slice(0,-1)) + piece.slice(-1)
+            else boardString = boardString + '00'
+        }
+    }
+    return boardString
 }
 //
 // let board = [
@@ -171,6 +217,7 @@ export function botAction(G:DouShouQiState, botPlayerNumber:string){
 //     ['rat1', null, null],
 //     ['elephant0', null, 'lion0']
 // ]
+// console.log(boardToString(board,3,3))
 // let dens = {1:[[0,1]], 0:[[1,1]]}
 // let result = locatePieces(board, '0')
 // class Piece{

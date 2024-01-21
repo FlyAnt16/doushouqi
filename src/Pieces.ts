@@ -3,7 +3,7 @@ class Piece{
     value : number;
     readonly canEnterRiver : boolean;
     readonly canCrossRiver : boolean;
-    readonly playerNumber : number
+    readonly playerNumber : number;
 
     constructor(value:number, canEnterRiver:boolean, canCrossRiver:boolean, playerNumber:number) {
         this.defaultValue = value;
@@ -36,5 +36,3 @@ export const Pieces:PiecesType = {
     'cat1' : new Piece(1, false, false, 1),
     'rat1' : new Piece(0, true, false, 1)
 }
-
-console.log(JSON.parse(JSON.stringify(Pieces)))

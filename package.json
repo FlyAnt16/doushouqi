@@ -9,8 +9,12 @@
     "boardgame.io": "^0.50.2",
     "esm": "^3.2.25",
     "koa-static": "^5.0.0",
+    "plotly.js": "^2.28.0",
+    "plotly.js-dist": "^2.28.0",
+    "plotly.js-dist-min": "^2.28.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-plotly.js": "^2.6.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
@@ -37,5 +41,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/plotly.js": "^2.12.32",
+    "@types/react-plotly.js": "^2.6.3"
   }
 }

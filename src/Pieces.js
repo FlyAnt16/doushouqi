@@ -28,4 +28,3 @@ exports.Pieces = {
     'cat1': new Piece(1, false, false, 1),
     'rat1': new Piece(0, true, false, 1)
 };
-console.log(JSON.parse(JSON.stringify(exports.Pieces)));
