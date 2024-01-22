@@ -14,10 +14,11 @@ const pieceValues: {[key:string] : number} = {
     'rat' : 2,
 }
 
-let timeToMove = 0;
 let timeInEvaluation = 0;
 let timeInComputeMove  = 0;
 let numOfNode = 0;
+let numOfEvaluation = 0;
+let numOfComputeMove = 0;
 
 const computeDistance = ([row,col]:number[],target:number[]) => Math.abs(target[0]-row) + Math.abs(target[1]-col);
 
@@ -38,6 +39,7 @@ const distanceValue = (distance:number) => {
     }
 }
 
+// return coordinate of all pieces of a given player
 function locatePieces(board:BoardType, playerID:string):{[key:string]:number[]}{
     let pieceCoordinates:{[key:string]:number[]} = {}
     let enemyRatPresent = false
@@ -58,6 +60,7 @@ function locatePieces(board:BoardType, playerID:string):{[key:string]:number[]}{
     }
     return pieceCoordinates
 }
+
 export function boardEvaluation(board:BoardType, playerID:string, dens:PlayerSquareType){
     let startTime = performance.now()
     let friendlyPieceCoordinates = locatePieces(board, String(1-parseInt(playerID)))
@@ -71,6 +74,7 @@ export function boardEvaluation(board:BoardType, playerID:string, dens:PlayerSqu
         return accumulator + currentValue},0)
     let endTime = performance.now()
     timeInEvaluation += endTime - startTime
+    numOfEvaluation += 1
     return value
 }
 
@@ -101,18 +105,18 @@ function computeFriendlyPossibleMoves(board:BoardType, numOfRow:number, numOfCol
     }
     let endTime = performance.now()
     timeInComputeMove += endTime - startTime
+    numOfComputeMove += 1
     return movesArray;
 }
 
-// assume bot is player 1 and user is player 0
 function findBestMove(G:DouShouQiState, botPlayerNumber:string):number[][]{
-    // if (boardToString(G.cells, G.numOfRow, G.numOfCol) in G.transposition) return G.transposition[boardToString(G.cells, G.numOfRow, G.numOfCol)]
+    if (boardToString(G.cells, G.numOfRow, G.numOfCol) in G.transposition) return G.transposition[boardToString(G.cells, G.numOfRow, G.numOfCol)][0]
     let moves = computeFriendlyPossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces, botPlayerNumber)
     let bestMove = -1000000
     let bestMoveFound = moves[0];
 
     for ( const move of moves){
-        let value = minimax(1, 5, false, -100000, 100000, makeMove(G.cells, move[0], G.pieces, move[1], G.traps, botPlayerNumber), G.numOfRow, G.numOfCol, G.rivers, G.dens, G.traps)
+        let value = minimax(1, 5, false, -100000, 100000, makeMove(G.cells, move[0], G.pieces, move[1], G.traps, botPlayerNumber), G.numOfRow, G.numOfCol, G.rivers, G.dens, G.traps, G.transposition)
         if (value >= bestMove){
             bestMove = value;
             bestMoveFound = move;
@@ -121,7 +125,7 @@ function findBestMove(G:DouShouQiState, botPlayerNumber:string):number[][]{
     return bestMoveFound
 }
 
-function minimax(currentDepth:number, maxDepth:number, isMax:boolean, alpha:number, beta:number, [board, pieces]:[BoardType, PiecesType], numOfRow:number, numOfCol:number, rivers:number[][], dens:PlayerSquareType, traps:PlayerSquareType){
+function minimax(currentDepth:number, maxDepth:number, isMax:boolean, alpha:number, beta:number, [board, pieces]:[BoardType, PiecesType], numOfRow:number, numOfCol:number, rivers:number[][], dens:PlayerSquareType, traps:PlayerSquareType, transposition:{[key:string] : [number[][], number]}){
     numOfNode += 1
     let currentPlayer:string;
     if (isMax)
@@ -136,16 +140,21 @@ function minimax(currentDepth:number, maxDepth:number, isMax:boolean, alpha:numb
     let moves = computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, currentPlayer)
     if (isMax){
         let bestMove = -100000
-        for (let i=0; i<moves.length; i++){
-            bestMove = Math.max(bestMove, minimax(currentDepth+1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps))
-            alpha = Math.max(bestMove, alpha)
-            if (beta <= alpha) break
+        if (boardToString(board, numOfRow, numOfCol) in transposition) {
+            bestMove = transposition[boardToString(board, numOfRow, numOfCol)][1]
+        } else {
+
+            for (let i = 0; i < moves.length; i++) {
+                bestMove = Math.max(bestMove, minimax(currentDepth + 1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps, transposition))
+                alpha = Math.max(bestMove, alpha)
+                if (beta <= alpha) break
+            }
         }
         return bestMove
     } else {
         let bestMove = 100000
         for (let i=0; i<moves.length; i++){
-            bestMove = Math.min(bestMove, minimax(currentDepth+1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps))
+            bestMove = Math.min(bestMove, minimax(currentDepth+1, maxDepth, !isMax, alpha, beta, makeMove(board, moves[i][0], pieces, moves[i][1], traps, currentPlayer), numOfRow, numOfCol, rivers, dens, traps, transposition))
             beta = Math.min(bestMove, beta)
             if (beta <= alpha) break
         }
@@ -158,9 +167,11 @@ export function botAction(G:DouShouQiState, botPlayerNumber:string){
     timeInEvaluation = 0
     timeInComputeMove = 0
     numOfNode = 0
+    numOfComputeMove = 0
+    numOfEvaluation = 0
 
     let move = findBestMove(G, botPlayerNumber)
-    // G.transposition[boardToString(G.cells,G.numOfRow, G.numOfCol)] = move
+    let currentBoardString = boardToString(G.cells,G.numOfRow, G.numOfCol)
     let [initialRow, initialCol] = move[0]
     let [destinationRow, destinationCol] = move[1]
     let selectedPiece = G.cells[initialRow][initialCol] as string
@@ -172,11 +183,14 @@ export function botAction(G:DouShouQiState, botPlayerNumber:string){
     } else{
         G.pieces[selectedPiece].value = G.pieces[selectedPiece].defaultValue
     }
+    G.transposition[currentBoardString] = [move, boardEvaluation(G.cells, botPlayerNumber, G.dens)]
     let endTime = performance.now()
     console.log('total time:',endTime - startTime)
     console.log('time in evaluation:',timeInEvaluation)
     console.log('time in compute move:',timeInComputeMove)
     console.log('number of nodes searched:',numOfNode)
+    console.log('number of calls to evaluation:',numOfEvaluation)
+    console.log('number of calls to compute move:',numOfComputeMove)
 }
 
 function pieceToDigit(piece:string){

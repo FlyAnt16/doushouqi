@@ -15,7 +15,7 @@ export interface DouShouQiState{
     cells : BoardType,
     pieces : PiecesType,
     possibleMovesLookUp : { [key: string] : number[][]},
-    transposition : {[key:string] : number[][]}
+    transposition : {[key:string] : [number[][], number]}
 }
 
 
@@ -120,7 +120,6 @@ const firstPieceCanCaptureSecondPiece  = (pieces:PiecesType, piece1:string, piec
 
 const checkValidSquare = (board:BoardType, pieces:PiecesType, piece:string, [row, col]:number[]) =>
     board[row][col] === null || firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
-
 // {
 //     if (board[row][col] !== null){
 //         return firstPieceCanCaptureSecondPiece(pieces, piece, board[row][col] as string)
