@@ -35,6 +35,16 @@ const distanceValue = (distance) => {
             return 1;
     }
 };
+const distanceToRiver = (rivers, [row, col]) => Math.min(...rivers.map((river) => computeDistance([row, col], river))) - 1;
+function pieceScore(piece, coordinate, enemyDenCoordinates, rivers) {
+    if (piece === 'tiger' || piece === 'lion') {
+        return pieceValues[piece] * (distanceValue(computeDistance(coordinate, enemyDenCoordinates)) - distanceToRiver(rivers, coordinate));
+    }
+    else {
+        return pieceValues[piece] * distanceValue(computeDistance(coordinate, enemyDenCoordinates));
+    }
+}
+// return coordinate of all pieces of a given player
 function locatePieces(board, playerID) {
     let pieceCoordinates = {};
     let enemyRatPresent = false;
@@ -59,20 +69,20 @@ function locatePieces(board, playerID) {
     }
     return pieceCoordinates;
 }
-function boardEvaluation(board, playerID, dens) {
-    let startTime = performance.now();
+function boardEvaluation(board, playerID, dens, rivers) {
+    // let startTime = performance.now()
     let friendlyPieceCoordinates = locatePieces(board, String(1 - parseInt(playerID)));
     let friendlyDenCoordinates = dens[1 - parseInt(playerID)][0];
     let enemyPieceCoordinates = locatePieces(board, playerID);
     let enemyDenCoordinates = dens[parseInt(playerID)][0];
-    let value = Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) => pieceValues[piece] * distanceValue(computeDistance(coordinate, enemyDenCoordinates))).reduce((accumulator, currentValue) => {
+    let value = Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) => pieceScore(piece, coordinate, enemyDenCoordinates, rivers)).reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
-    }, 0) - Object.entries(enemyPieceCoordinates).map(([piece, coordinate]) => pieceValues[piece] * distanceValue(computeDistance(coordinate, friendlyDenCoordinates))).reduce((accumulator, currentValue) => {
+    }, 0) - Object.entries(enemyPieceCoordinates).map(([piece, coordinate]) => pieceScore(piece, coordinate, friendlyDenCoordinates, rivers)).reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
     }, 0);
-    let endTime = performance.now();
-    timeInEvaluation += endTime - startTime;
-    numOfEvaluation += 1;
+    // let endTime = performance.now()
+    // timeInEvaluation += endTime - startTime
+    // numOfEvaluation += 1
     return value;
 }
 exports.boardEvaluation = boardEvaluation;
@@ -91,7 +101,7 @@ function makeMove(board, [initialRow, initialCol], pieces, [destinationRow, dest
     return [boardCopy, piecesCopy];
 }
 function computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, playerID) {
-    let startTime = performance.now();
+    // let startTime = performance.now()
     const movesArray = [];
     for (let row = 0; row < numOfRow; row++) {
         for (let col = 0; col < numOfCol; col++) {
@@ -101,16 +111,41 @@ function computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, p
             }
         }
     }
-    let endTime = performance.now();
-    timeInComputeMove += endTime - startTime;
-    numOfComputeMove += 1;
+    // let endTime = performance.now()
+    // timeInComputeMove += endTime - startTime
+    // numOfComputeMove += 1
     return movesArray;
 }
-// assume bot is player 1 and user is player 0
+const isCapture = (move, board) => board[move[1][0]][move[1][1]] !== null;
+// @ts-ignore
+const isLionOrTigerMove = (move, board) => ['tiger', 'lion'].indexOf(board[move[0][0]][move[0][1]].slice(0, -1)) >= 0;
+const moveScore = (move, board) => {
+    if (isCapture(move, board))
+        return 2;
+    else if (isLionOrTigerMove(move, board))
+        return 1;
+    else
+        return 0;
+};
+const firstMoveMoreImportantThanSecondMove = (firstMove, secondMove, board) => moveScore(firstMove, board) > moveScore(secondMove, board);
+// order the move so capture goes first, then tiger/lion moves then the rest
+function moveOrdering(moves, board) {
+    for (let i = 0; i < moves.length - 1; i++) {
+        for (let j = i + 1; j < moves.length; j++) {
+            if (firstMoveMoreImportantThanSecondMove(moves[j], moves[i], board)) {
+                [moves[i], moves[j]] = [moves[j], moves[i]];
+            }
+        }
+    }
+    return moves;
+}
 function findBestMove(G, botPlayerNumber) {
     if (boardToString(G.cells, G.numOfRow, G.numOfCol) in G.transposition)
         return G.transposition[boardToString(G.cells, G.numOfRow, G.numOfCol)][0];
     let moves = computeFriendlyPossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces, botPlayerNumber);
+    console.log(moves);
+    moves = moveOrdering(moves, G.cells);
+    console.log(moves);
     let bestMove = -1000000;
     let bestMoveFound = moves[0];
     for (const move of moves) {
@@ -123,16 +158,17 @@ function findBestMove(G, botPlayerNumber) {
     return bestMoveFound;
 }
 function minimax(currentDepth, maxDepth, isMax, alpha, beta, [board, pieces], numOfRow, numOfCol, rivers, dens, traps, transposition) {
-    numOfNode += 1;
+    // numOfNode += 1
     let currentPlayer;
     if (isMax)
         currentPlayer = '1';
     else
         currentPlayer = '0';
     if (currentDepth === maxDepth) {
-        return boardEvaluation(board, currentPlayer, dens);
+        return boardEvaluation(board, currentPlayer, dens, rivers);
     }
     let moves = computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, currentPlayer);
+    moves = moveOrdering(moves, board);
     if (isMax) {
         let bestMove = -100000;
         if (boardToString(board, numOfRow, numOfCol) in transposition) {
@@ -160,6 +196,7 @@ function minimax(currentDepth, maxDepth, isMax, alpha, beta, [board, pieces], nu
     }
 }
 function botAction(G, botPlayerNumber) {
+    // TODO: bot doesn't want to make the winning move (enter den)
     let startTime = performance.now();
     timeInEvaluation = 0;
     timeInComputeMove = 0;
@@ -179,14 +216,14 @@ function botAction(G, botPlayerNumber) {
     else {
         G.pieces[selectedPiece].value = G.pieces[selectedPiece].defaultValue;
     }
-    G.transposition[currentBoardString] = [move, boardEvaluation(G.cells, botPlayerNumber, G.dens)];
+    G.transposition[currentBoardString] = [move, boardEvaluation(G.cells, botPlayerNumber, G.dens, G.rivers)];
     let endTime = performance.now();
     console.log('total time:', endTime - startTime);
-    console.log('time in evaluation:', timeInEvaluation);
-    console.log('time in compute move:', timeInComputeMove);
-    console.log('number of nodes searched:', numOfNode);
-    console.log('number of calls to evaluation:', numOfEvaluation);
-    console.log('number of calls to compute move:', numOfComputeMove);
+    // console.log('time in evaluation:',timeInEvaluation)
+    // console.log('time in compute move:',timeInComputeMove)
+    // console.log('number of nodes searched:',numOfNode)
+    // console.log('number of calls to evaluation:',numOfEvaluation)
+    // console.log('number of calls to compute move:',numOfComputeMove)
 }
 exports.botAction = botAction;
 function pieceToDigit(piece) {
@@ -222,12 +259,20 @@ function boardToString(board, numOfRow, numOfCol) {
     }
     return boardString;
 }
+let board = [
+    [null, null, null],
+    ['rat1', null, null],
+    ['elephant0', null, 'lion0']
+];
+// console.log(isCapture([[1,0],[2,0]], board))  // true
+// console.log(isCapture([[2,2],[2,1]], board)) // false
+// console.log(isLionOrTigerMove([[1,0],[2,0]], board)) // false
+// console.log(isLionOrTigerMove([[2,2],[2,1]], board)) // true
 //
-// let board = [
-//     [null, null, null],
-//     ['rat1', null, null],
-//     ['elephant0', null, 'lion0']
-// ]
+// let moves = [[[2,0],[2,1]], [[2,2],[2,1]], [[2,2],[1,2]]]
+// moves.forEach((move) => console.log(moveScore(move,board)))
+// moves = moveOrdering(moves,board)
+// console.log(moves)
 // console.log(boardToString(board,3,3))
 // let dens = {1:[[0,1]], 0:[[1,1]]}
 // let result = locatePieces(board, '0')
