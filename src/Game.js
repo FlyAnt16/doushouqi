@@ -41,7 +41,8 @@ exports.DouSHouQiSinglePlayer = {
                     makeMove(G, row, col);
                     if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null)))
                         events.endTurn();
-                    (0, bot_1.botAction)(G, '1');
+                    else
+                        (0, bot_1.botAction)(G, '1');
                     G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces);
                     events.endTurn();
                 }

@@ -197,6 +197,7 @@ function minimax(currentDepth, maxDepth, isMax, alpha, beta, [board, pieces], nu
 }
 function botAction(G, botPlayerNumber) {
     // TODO: bot doesn't want to make the winning move (enter den)
+    // TODO: transposition table only assume bot is second player (i.e. playerNumber = '1')
     let startTime = performance.now();
     timeInEvaluation = 0;
     timeInComputeMove = 0;
@@ -259,12 +260,12 @@ function boardToString(board, numOfRow, numOfCol) {
     }
     return boardString;
 }
-let board = [
-    [null, null, null],
-    ['rat1', null, null],
-    ['elephant0', null, 'lion0']
-];
-// console.log(isCapture([[1,0],[2,0]], board))  // true
+// let board = [
+//     [null, null, null],
+//     ['rat1', null, null],
+//     ['elephant0', null, 'lion0']
+// ]
+// // console.log(isCapture([[1,0],[2,0]], board))  // true
 // console.log(isCapture([[2,2],[2,1]], board)) // false
 // console.log(isLionOrTigerMove([[1,0],[2,0]], board)) // false
 // console.log(isLionOrTigerMove([[2,2],[2,1]], board)) // true
