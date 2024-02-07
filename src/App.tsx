@@ -24,6 +24,7 @@ const DouShouQi = Client({
 const DouShouQiSingle = Client({
     game: DouSHouQiSinglePlayer,
     board: Board,
+    numPlayers: 1,
 })
 
 export enum MenuState {

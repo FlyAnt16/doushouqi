@@ -26,6 +26,7 @@ const DouShouQi = (0, react_1.Client)({
 const DouShouQiSingle = (0, react_1.Client)({
     game: Game_1.DouSHouQiSinglePlayer,
     board: Board_1.Board,
+    numPlayers: 1,
 });
 var MenuState;
 (function (MenuState) {
