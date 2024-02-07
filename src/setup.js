@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setup = exports.randomPieceSetting = exports.initialiseSettings = exports.createNullBoard = void 0;
+exports.setup = exports.randomPieceSetup = exports.initialiseSettings = exports.createNullBoard = void 0;
 const Pieces_1 = require("./Pieces");
 const Game_1 = require("./Game");
 const defaultNumRow = 9;
@@ -66,11 +66,11 @@ function initialiseSettings(numRow = defaultNumRow, numCol = defaultNumCol, piec
     };
 }
 exports.initialiseSettings = initialiseSettings;
-function randomPieceSetting() {
+function randomPieceSetup() {
     let pieceOrder = shuffleArray(defaultPieceOrder);
     initialiseSettings(undefined, undefined, pieceOrder);
 }
-exports.randomPieceSetting = randomPieceSetting;
+exports.randomPieceSetup = randomPieceSetup;
 function setup() {
     return initialiseSettings();
 }

@@ -4,7 +4,7 @@ import {Client} from 'boardgame.io/react'
 import {Board} from "./Board";
 import {SocketIO} from "boardgame.io/multiplayer";
 import {useState} from "react";
-import {WelcomePage} from "./Welcome";
+import {Menu, MultiplyaerMenu} from "./Menu";
 import React from 'react';
 
 const { protocol, hostname, port } = window.location;
@@ -24,26 +24,39 @@ const DouShouQi = Client({
 const DouShouQiSingle = Client({
     game: DouSHouQiSinglePlayer,
     board: Board,
-    numPlayers : 1,
 })
 
+export enum MenuState {
+    Menu = 0,
+    SinglePlayer = 1,
+    MultiPlayer = 2,
+    Online1 = 3,
+    Online2 = 4,
+    LocalPassAndPlay = 5,
+}
+
 function App(){
-    const [page, setPage] = useState('Welcome')
-    function onClick(id:string){
-        setPage('Game'+id)
+    const [page, setPage] = useState(MenuState.Menu)
+
+    function onClick(state:number){
+        setPage(state as MenuState)
     }
 
     switch (page){
-        case 'Welcome' :
-            return <WelcomePage onClick={onClick}/>;
-        case 'Game':
+        case MenuState.Menu:
+            return <Menu onClick={onClick}/>;
+        case MenuState.SinglePlayer:
             return <DouShouQiSingle />
-        case 'Game0':
+        case MenuState.MultiPlayer:
+            return <MultiplyaerMenu onClick={onClick}/>
+        case MenuState.Online1:
             return <DouShouQiClient matchID="0" playerID="0"/>;
-        case 'Game1':
+        case MenuState.Online2:
             return <DouShouQiClient matchID="0" playerID="1"/>
+        case MenuState.LocalPassAndPlay:
+            return <DouShouQi />
         default:
-            return <WelcomePage onClick={onClick} />
+            return <Menu onClick={onClick} />
     }
 }
 

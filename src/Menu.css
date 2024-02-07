@@ -1,7 +1,10 @@
 .welcome-box {
-    border : 2px solid #000000;
+    border : 2px solid darkgreen;
+    border-radius: 5px;
     height : 50vh;
     width : 50vw;
+    background: rgb(50,209,68);
+    background: linear-gradient(90deg, rgba(50,209,68,1) 0%, rgba(27,143,12,1) 100%);
 }
 
 .welcome-button {
@@ -11,6 +14,7 @@
     color : white;
     transition-duration: 0.4s;
     padding: 14px 40px;
+    margin: 10px;
 }
 
 .welcome-button.hover{

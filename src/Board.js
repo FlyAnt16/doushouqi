@@ -57,36 +57,38 @@ function Board({ ctx, G, moves, playerID }) {
         let col = id - row * G.numOfCol;
         return moves.onClick(row, col);
     };
-    return (react_1.default.createElement("div", { className: 'screen' },
-        react_1.default.createElement("div", null,
-            react_1.default.createElement("table", { id: "board" },
-                react_1.default.createElement("tbody", null, [...Array(G.numOfRow).keys()].map((row) => react_1.default.createElement("tr", { key: row }, [...Array(G.numOfCol).keys()].map(col => {
-                    // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                    // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
-                    // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
-                    let playerRow = row;
-                    let playerCol = col;
-                    return react_1.default.createElement("td", { key: row * G.numOfCol + col },
-                        react_1.default.createElement("button", { className: ["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece ? isPossibleMove(G.possibleMovesLookUp[G.selectedPiece], [playerRow, playerCol]) ? "possibleMove" : null : null].join(" "), onClick: () => onClick(playerRow * G.numOfCol + playerCol) }));
-                })))))),
-        react_1.default.createElement("div", { className: 'pieceOrder' },
-            "Piece order:",
-            react_1.default.createElement("img", { alt: 'elephant', width: '40px', height: '40px', src: elephant0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'lion', width: '40px', height: '40px', src: lion0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'tiger', width: '40px', height: '40px', src: tiger0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'panther', width: '40px', height: '40px', src: panther0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'wolf', width: '40px', height: '40px', src: wolf0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'dog', width: '40px', height: '40px', src: dog0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'cat', width: '40px', height: '40px', src: cat0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'rat', width: '40px', height: '40px', src: rat0_png_1.default }),
-            ">",
-            react_1.default.createElement("img", { alt: 'elephant', width: '40px', height: '40px', src: elephant0_png_1.default }))));
+    return (react_1.default.createElement("div", { className: 'App' },
+        react_1.default.createElement("div", { className: 'screen' },
+            react_1.default.createElement("div", null,
+                react_1.default.createElement("table", { id: "board" },
+                    react_1.default.createElement("tbody", null, [...Array(G.numOfRow).keys()].map((row) => react_1.default.createElement("tr", { key: row }, [...Array(G.numOfCol).keys()].map(col => {
+                        // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
+                        // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
+                        // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                        let playerRow = row;
+                        let playerCol = col;
+                        return react_1.default.createElement("td", { key: row * G.numOfCol + col },
+                            react_1.default.createElement("button", { className: ["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece ? isPossibleMove(G.possibleMovesLookUp[G.selectedPiece], [playerRow, playerCol]) ? "possibleMove" : null : null].join(" "), onClick: () => onClick(playerRow * G.numOfCol + playerCol) }));
+                    })))))),
+            react_1.default.createElement("div", { className: 'pieceOrder' },
+                react_1.default.createElement("strong", null, "Piece order"),
+                ":",
+                react_1.default.createElement("img", { alt: 'elephant', width: '40px', height: '40px', src: elephant0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'lion', width: '40px', height: '40px', src: lion0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'tiger', width: '40px', height: '40px', src: tiger0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'panther', width: '40px', height: '40px', src: panther0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'wolf', width: '40px', height: '40px', src: wolf0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'dog', width: '40px', height: '40px', src: dog0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'cat', width: '40px', height: '40px', src: cat0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'rat', width: '40px', height: '40px', src: rat0_png_1.default }),
+                ">",
+                react_1.default.createElement("img", { alt: 'elephant', width: '40px', height: '40px', src: elephant0_png_1.default })))));
 }
 exports.Board = Board;

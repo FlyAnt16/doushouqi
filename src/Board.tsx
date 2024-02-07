@@ -37,46 +37,48 @@ export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
     }
 
     return(
-        <div className={'screen'}>
-            <div>
-                <table id="board">
-                    <tbody>
-                    {[...Array(G.numOfRow).keys()].map((row) =>
-                        <tr key={row}>
-                            {[...Array(G.numOfCol).keys()].map(col => {
-                                // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
-                                // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
-                                // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
-                                let playerRow = row
-                                let playerCol = col
-                                return <td key={row * G.numOfCol + col}>
-                                    <button className={["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece?isPossibleMove(G.possibleMovesLookUp[G.selectedPiece],[playerRow,playerCol])?"possibleMove":null:null].join(" ")}
-                                            onClick={() => onClick(playerRow*G.numOfCol+playerCol)}></button>
-                                </td>})}
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
-            <div className='pieceOrder'>
-                Piece order:
-                <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
-                &gt;
-                <img alt='lion' width={'40px'} height={'40px'} src={lion}/>
-                &gt;
-                <img alt='tiger' width={'40px'} height={'40px'} src={tiger}/>
-                &gt;
-                <img alt='panther' width={'40px'} height={'40px'} src={panther}/>
-                &gt;
-                <img alt='wolf' width={'40px'} height={'40px'} src={wolf}/>
-                &gt;
-                <img alt='dog' width={'40px'} height={'40px'} src={dog}/>
-                &gt;
-                <img alt='cat' width={'40px'} height={'40px'} src={cat}/>
-                &gt;
-                <img alt='rat' width={'40px'} height={'40px'} src={rat}/>
-                &gt;
-                <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
+        <div className='App'>
+            <div className='screen'>
+                <div>
+                    <table id="board">
+                        <tbody>
+                        {[...Array(G.numOfRow).keys()].map((row) =>
+                            <tr key={row}>
+                                {[...Array(G.numOfCol).keys()].map(col => {
+                                    // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
+                                    // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
+                                    // let playerCol = reflectCol(G.numOfCol, col, playerID as string)
+                                    let playerRow = row
+                                    let playerCol = col
+                                    return <td key={row * G.numOfCol + col}>
+                                        <button className={["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece?isPossibleMove(G.possibleMovesLookUp[G.selectedPiece],[playerRow,playerCol])?"possibleMove":null:null].join(" ")}
+                                                onClick={() => onClick(playerRow*G.numOfCol+playerCol)}></button>
+                                    </td>})}
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+                <div className='pieceOrder'>
+                    <strong>Piece order</strong>:
+                    <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
+                    &gt;
+                    <img alt='lion' width={'40px'} height={'40px'} src={lion}/>
+                    &gt;
+                    <img alt='tiger' width={'40px'} height={'40px'} src={tiger}/>
+                    &gt;
+                    <img alt='panther' width={'40px'} height={'40px'} src={panther}/>
+                    &gt;
+                    <img alt='wolf' width={'40px'} height={'40px'} src={wolf}/>
+                    &gt;
+                    <img alt='dog' width={'40px'} height={'40px'} src={dog}/>
+                    &gt;
+                    <img alt='cat' width={'40px'} height={'40px'} src={cat}/>
+                    &gt;
+                    <img alt='rat' width={'40px'} height={'40px'} src={rat}/>
+                    &gt;
+                    <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
+                </div>
             </div>
         </div>
     );

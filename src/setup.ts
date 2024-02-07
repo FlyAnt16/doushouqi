@@ -80,7 +80,7 @@ export function initialiseSettings(numRow=defaultNumRow,
     }
 }
 
-export function randomPieceSetting(){
+export function randomPieceSetup(){
     let pieceOrder = shuffleArray<string>(defaultPieceOrder)
     initialiseSettings(undefined, undefined, pieceOrder)
 }

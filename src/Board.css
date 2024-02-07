@@ -189,4 +189,5 @@
 .pieceOrder{
     display: flex;
     align-items: center;
+    background-color: white;
 }
