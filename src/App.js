@@ -42,6 +42,7 @@ function App() {
     function onClick(state) {
         setPage(state);
     }
+    // TODO: use Lobby to create match that  allows setup data to be passed for random board setup
     switch (page) {
         case MenuState.Menu:
             return react_3.default.createElement(Menu_1.Menu, { onClick: onClick });

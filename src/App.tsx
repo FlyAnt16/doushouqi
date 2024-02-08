@@ -42,7 +42,7 @@ function App(){
     function onClick(state:number){
         setPage(state as MenuState)
     }
-
+    // TODO: use Lobby to create match that  allows setup data to be passed for random board setup
     switch (page){
         case MenuState.Menu:
             return <Menu onClick={onClick}/>;

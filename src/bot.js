@@ -13,11 +13,6 @@ const pieceValues = {
     'cat': 2,
     'rat': 2,
 };
-let timeInEvaluation = 0;
-let timeInComputeMove = 0;
-let numOfNode = 0;
-let numOfEvaluation = 0;
-let numOfComputeMove = 0;
 const computeDistance = ([row, col], target) => Math.abs(target[0] - row) + Math.abs(target[1] - col);
 const distanceValue = (distance) => {
     switch (distance) {
@@ -70,20 +65,15 @@ function locatePieces(board, playerID) {
     return pieceCoordinates;
 }
 function boardEvaluation(board, playerID, dens, rivers) {
-    // let startTime = performance.now()
     let friendlyPieceCoordinates = locatePieces(board, String(1 - parseInt(playerID)));
     let friendlyDenCoordinates = dens[1 - parseInt(playerID)][0];
     let enemyPieceCoordinates = locatePieces(board, playerID);
     let enemyDenCoordinates = dens[parseInt(playerID)][0];
-    let value = Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) => pieceScore(piece, coordinate, enemyDenCoordinates, rivers)).reduce((accumulator, currentValue) => {
+    return Object.entries(friendlyPieceCoordinates).map(([piece, coordinate]) => pieceScore(piece, coordinate, enemyDenCoordinates, rivers)).reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
     }, 0) - Object.entries(enemyPieceCoordinates).map(([piece, coordinate]) => pieceScore(piece, coordinate, friendlyDenCoordinates, rivers)).reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
     }, 0);
-    // let endTime = performance.now()
-    // timeInEvaluation += endTime - startTime
-    // numOfEvaluation += 1
-    return value;
 }
 exports.boardEvaluation = boardEvaluation;
 function makeMove(board, [initialRow, initialCol], pieces, [destinationRow, destinationCol], traps, playerID) {
@@ -101,7 +91,6 @@ function makeMove(board, [initialRow, initialCol], pieces, [destinationRow, dest
     return [boardCopy, piecesCopy];
 }
 function computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, playerID) {
-    // let startTime = performance.now()
     const movesArray = [];
     for (let row = 0; row < numOfRow; row++) {
         for (let col = 0; col < numOfCol; col++) {
@@ -111,9 +100,6 @@ function computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, p
             }
         }
     }
-    // let endTime = performance.now()
-    // timeInComputeMove += endTime - startTime
-    // numOfComputeMove += 1
     return movesArray;
 }
 const isCapture = (move, board) => board[move[1][0]][move[1][1]] !== null;
@@ -143,9 +129,7 @@ function findBestMove(G, botPlayerNumber) {
     if (boardToString(G.cells, G.numOfRow, G.numOfCol) in G.transposition)
         return G.transposition[boardToString(G.cells, G.numOfRow, G.numOfCol)][0];
     let moves = computeFriendlyPossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces, botPlayerNumber);
-    console.log(moves);
     moves = moveOrdering(moves, G.cells);
-    console.log(moves);
     let bestMove = -1000000;
     let bestMoveFound = moves[0];
     for (const move of moves) {
@@ -157,14 +141,16 @@ function findBestMove(G, botPlayerNumber) {
     }
     return bestMoveFound;
 }
+function gameEnd(board, dens) {
+    return Object.values(dens).flat().some(a => (board[a[0]][a[1]] !== null));
+}
 function minimax(currentDepth, maxDepth, isMax, alpha, beta, [board, pieces], numOfRow, numOfCol, rivers, dens, traps, transposition) {
-    // numOfNode += 1
     let currentPlayer;
     if (isMax)
         currentPlayer = '1';
     else
         currentPlayer = '0';
-    if (currentDepth === maxDepth) {
+    if (currentDepth === maxDepth || gameEnd(board, dens)) {
         return boardEvaluation(board, currentPlayer, dens, rivers);
     }
     let moves = computeFriendlyPossibleMoves(board, numOfRow, numOfCol, rivers, dens, pieces, currentPlayer);
@@ -198,12 +184,6 @@ function minimax(currentDepth, maxDepth, isMax, alpha, beta, [board, pieces], nu
 function botAction(G, botPlayerNumber) {
     // TODO: bot doesn't want to make the winning move (enter den)
     // TODO: transposition table only assume bot is second player (i.e. playerNumber = '1')
-    let startTime = performance.now();
-    timeInEvaluation = 0;
-    timeInComputeMove = 0;
-    numOfNode = 0;
-    numOfComputeMove = 0;
-    numOfEvaluation = 0;
     let move = findBestMove(G, botPlayerNumber);
     let currentBoardString = boardToString(G.cells, G.numOfRow, G.numOfCol);
     let [initialRow, initialCol] = move[0];
@@ -218,13 +198,6 @@ function botAction(G, botPlayerNumber) {
         G.pieces[selectedPiece].value = G.pieces[selectedPiece].defaultValue;
     }
     G.transposition[currentBoardString] = [move, boardEvaluation(G.cells, botPlayerNumber, G.dens, G.rivers)];
-    let endTime = performance.now();
-    console.log('total time:', endTime - startTime);
-    // console.log('time in evaluation:',timeInEvaluation)
-    // console.log('time in compute move:',timeInComputeMove)
-    // console.log('number of nodes searched:',numOfNode)
-    // console.log('number of calls to evaluation:',numOfEvaluation)
-    // console.log('number of calls to compute move:',numOfComputeMove)
 }
 exports.botAction = botAction;
 function pieceToDigit(piece) {

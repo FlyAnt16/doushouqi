@@ -36,6 +36,13 @@ export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
         return moves.onClick(row,col)
     }
 
+    if (ctx.gameover){
+        let winner = '';
+        if (ctx.gameover.winner==='0') winner='Red'
+        else winner='Green';
+        alert(winner+' has won!');
+    }
+
     return(
         <div className='App'>
             <div className='screen'>

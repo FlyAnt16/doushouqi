@@ -57,6 +57,14 @@ function Board({ ctx, G, moves, playerID }) {
         let col = id - row * G.numOfCol;
         return moves.onClick(row, col);
     };
+    if (ctx.gameover) {
+        let winner = '';
+        if (ctx.gameover.winner === '0')
+            winner = 'Red';
+        else
+            winner = 'Green';
+        alert(winner + ' has won!');
+    }
     return (react_1.default.createElement("div", { className: 'App' },
         react_1.default.createElement("div", { className: 'screen' },
             react_1.default.createElement("div", null,
