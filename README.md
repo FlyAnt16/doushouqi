@@ -1,70 +1,27 @@
-# Getting Started with Create React App
+# DouShouQi
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Game of [DouShouQi](https://en.wikipedia.org/wiki/Jungle_(board_game)) created using [boardgame.io]()
 
-## Available Scripts
+## Quick start
 
-In the project directory, you can run:
+To play locally, clone the repository and install boardgame.io using `npm install boardgame.io`. Then use `npm start` to start a dev build.
+Open http://localhost:3000 to view it in the browser. You can either choose Single Player to play against AI or Multiplayer -> Local pass and play to play locally.
 
-### `npm start`
+To play online, [play](https://dou-shou-qi-d2d0b623ebb4.herokuapp.com/) it here. (Currently only support two people joining at the same time, lobby to be added later.)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Rule
+There are 8 types of pieces, elephant, lion, tiger, panther, wolf, dog, cat, mouse.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+![elephant](/src/images/elephant0.png) ![lion](/src/images/lion0.png) ![tiger](/src/images/tiger0.png) ![panther](/src/images/panther0.png) ![wolf](/src/images/wolf0.png) ![dog](/src/images/dog0.png) ![cat](/src/images/cat0.png) ![mouse](/src/images/rat0.png)
 
-### `npm test`
+The prior piece can capture everything come after it in the list, including itself. (so friendly tiger and capture enemy tiger, panther, wolf, dog, cat and mouse) with the exception that the elephant cannot capture mouse and the mouse can capture the elephant.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+In your turn, you can select one friendly piece and move it to an adjacent empty square or capture an enemy piece that can be captured. In the game, yellow background indicates squares that the current piece can go to.
 
-### `npm run build`
+The aim of the game is having a friendly piece in the enemy den (the square with a flag).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Special rules
+- The blue squares on the board are rivers.
+- Only mouse can enter river, and can capture from the river.
+- Lion and tiger can jump across the river, both horizontally and vertically, but cannot jump if any mouse is in the way.
+- The squares surrounding the den are traps. When an enemy piece is in the trap, **any** friendly piece can capture it.
