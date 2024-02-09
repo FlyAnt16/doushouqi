@@ -47,7 +47,7 @@ export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
         <div className='App'>
             <div className='screen'>
                 <div>
-                    <table id="board">
+                    <table className='center' id="board">
                         <tbody>
                         {[...Array(G.numOfRow).keys()].map((row) =>
                             <tr key={row}>
@@ -66,7 +66,7 @@ export function Board({ctx, G, moves, playerID}:DouShouQiProps) {
                         </tbody>
                     </table>
                 </div>
-                <div className='pieceOrder'>
+                <div className='pieceOrder center'>
                     <strong>Piece order</strong>:
                     <img alt='elephant' width={'40px'} height={'40px'} src={elephant}/>
                     &gt;

@@ -68,7 +68,7 @@ function Board({ ctx, G, moves, playerID }) {
     return (react_1.default.createElement("div", { className: 'App' },
         react_1.default.createElement("div", { className: 'screen' },
             react_1.default.createElement("div", null,
-                react_1.default.createElement("table", { id: "board" },
+                react_1.default.createElement("table", { className: 'center', id: "board" },
                     react_1.default.createElement("tbody", null, [...Array(G.numOfRow).keys()].map((row) => react_1.default.createElement("tr", { key: row }, [...Array(G.numOfCol).keys()].map(col => {
                         // TODO: add mode variable for pass and play / opposite play / multiplayer change currentPlayer to playerID for multiplayer
                         // let playerRow = reflectRow(G.numOfRow, row, playerID as string)
@@ -78,7 +78,7 @@ function Board({ ctx, G, moves, playerID }) {
                         return react_1.default.createElement("td", { key: row * G.numOfCol + col },
                             react_1.default.createElement("button", { className: ["cell", terrain[playerRow][playerCol], G.cells[playerRow][playerCol], G.selectedPiece ? isPossibleMove(G.possibleMovesLookUp[G.selectedPiece], [playerRow, playerCol]) ? "possibleMove" : null : null].join(" "), onClick: () => onClick(playerRow * G.numOfCol + playerCol) }));
                     })))))),
-            react_1.default.createElement("div", { className: 'pieceOrder' },
+            react_1.default.createElement("div", { className: 'pieceOrder center' },
                 react_1.default.createElement("strong", null, "Piece order"),
                 ":",
                 react_1.default.createElement("img", { alt: 'elephant', width: '40px', height: '40px', src: elephant0_png_1.default }),

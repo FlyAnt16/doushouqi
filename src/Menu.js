@@ -9,21 +9,21 @@ require("./Menu.css");
 const App_1 = require("./App");
 function Menu({ onClick }) {
     return (react_1.default.createElement("div", { className: 'App' },
-        react_1.default.createElement("div", { className: 'welcome-box' },
-            react_1.default.createElement("h2", null, "DouShouQi"),
-            react_1.default.createElement("button", { className: 'welcome-button', onClick: () => onClick(App_1.MenuState.SinglePlayer) }, "Single Player"),
+        react_1.default.createElement("div", { className: 'menu-box' },
+            react_1.default.createElement("h2", { className: 'menu-title' }, "\u6597\u517D\u68CB"),
+            react_1.default.createElement("button", { className: 'menu-button', onClick: () => onClick(App_1.MenuState.SinglePlayer) }, "Single Player"),
             react_1.default.createElement("br", null),
-            react_1.default.createElement("button", { className: 'welcome-button', onClick: () => onClick(App_1.MenuState.MultiPlayer) }, "Multiplayer"))));
+            react_1.default.createElement("button", { className: 'menu-button', onClick: () => onClick(App_1.MenuState.MultiPlayer) }, "Multiplayer"))));
 }
 exports.Menu = Menu;
 function MultiplyaerMenu({ onClick }) {
     return (react_1.default.createElement("div", { className: 'App' },
-        react_1.default.createElement("div", { className: 'welcome-box' },
-            react_1.default.createElement("h2", null, "DouShouQi"),
-            react_1.default.createElement("button", { className: 'welcome-button', onClick: () => onClick(App_1.MenuState.LocalPassAndPlay) }, "Local pass and play"),
+        react_1.default.createElement("div", { className: 'menu-box' },
+            react_1.default.createElement("h2", { className: 'menu-title' }, "\u6597\u517D\u68CB"),
+            react_1.default.createElement("button", { className: 'menu-button', onClick: () => onClick(App_1.MenuState.LocalPassAndPlay) }, "Local pass and play"),
             react_1.default.createElement("br", null),
-            react_1.default.createElement("button", { className: 'welcome-button', onClick: () => onClick(App_1.MenuState.Online1) }, "Online Player 1"),
+            react_1.default.createElement("button", { className: 'menu-button', onClick: () => onClick(App_1.MenuState.Online1) }, "Online Player 1"),
             react_1.default.createElement("br", null),
-            react_1.default.createElement("button", { className: 'welcome-button', onClick: () => onClick(App_1.MenuState.Online2) }, "Online Player 2"))));
+            react_1.default.createElement("button", { className: 'menu-button', onClick: () => onClick(App_1.MenuState.Online2) }, "Online Player 2"))));
 }
 exports.MultiplyaerMenu = MultiplyaerMenu;

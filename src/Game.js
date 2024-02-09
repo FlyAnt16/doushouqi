@@ -39,12 +39,12 @@ exports.DouSHouQiSinglePlayer = {
                 let possibleMoves = G.possibleMovesLookUp[G.selectedPiece];
                 if (possibleMoves.some(a => (a[0] === row && a[1] === col))) {
                     makeMove(G, row, col);
+                    events.endTurn();
                     if (Object.values(G.dens).flat().some(a => (G.cells[a[0]][a[1]] !== null)))
                         events.endTurn();
                     else
                         (0, bot_1.botAction)(G, '1');
                     G.possibleMovesLookUp = computePossibleMoves(G.cells, G.numOfRow, G.numOfCol, G.rivers, G.dens, G.pieces);
-                    events.endTurn();
                 }
             }
         }
